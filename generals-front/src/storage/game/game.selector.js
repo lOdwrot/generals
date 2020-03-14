@@ -1,0 +1,1 @@
+export const playersSelector = state => state.game.players

@@ -1,0 +1,15 @@
+.chat-wrapper {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.chat-history {
+    height: 200px;
+    border: solid 1px grey;
+    overflow-y: auto;
+}
+
+.new-message {
+    display: flex;
+}
