@@ -1,0 +1,23 @@
+{
+  "name": "generals-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./idex.js",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --inspect index.js --exec babel-node --presets es2015,stage-2",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.7",
+    "path": "^0.12.7",
+    "socket.io": "^2.3.0"
+  }
+}
