@@ -16,6 +16,9 @@ export default () => {
 
     return (
         <div className={styles['chat-wrapper']}>
+            <div className={styles['chat-header']}>
+                Room Chat
+            </div>
             <div className={styles['chat-history']}>
                 {
                     messages.map((v, index) => <div key={index}>{v}</div>)

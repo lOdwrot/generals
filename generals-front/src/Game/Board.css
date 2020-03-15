@@ -1,0 +1,68 @@
+.board-container {
+    padding-left: 55px;
+}
+
+.board-row {
+    display: flex
+}
+
+.board-tile {
+    text-shadow: 0 0 4px black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    border: solid 1px black;
+    font-weight: 600;
+    color: white;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-size: contain;
+    vertical-align: middle;
+    padding: 2px;
+    position: relative;
+}
+
+.clicable {
+    cursor: pointer;
+}
+
+.red-tile {
+    background-color: red !important;
+}
+
+.blue-tile {
+    background: blue;
+}
+
+.not-visible {
+    background-color: grey;
+}
+
+.selected-field {
+    opacity: 0.4;
+}
+
+.arrow-container {
+    position: absolute;
+    font-weight: bold;
+    font-size: 24px;
+    z-index: 99;
+}
+
+.arrow-left {
+    left: -10px;
+}
+
+.arrow-right {
+    right: -10px;
+}
+
+.arrow-up {
+    top: -16px;
+}
+
+.arrow-down {
+    bottom: -16px;
+}

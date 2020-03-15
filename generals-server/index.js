@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 const io = socketIO(server)
 const rooms = {}
 const users = {}
+
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
         const roomId = uniqid()
@@ -55,6 +56,10 @@ io.on('connection', (socket) => {
         const user = users[socket.id]
         if (!user) return console.log('No user registered')
         io.to(user.roomId).emit('chat', `${user.userName}: ${message}`)
+    })
+
+    socket.on('start', () => {
+        socket.emit
     })
 })
 

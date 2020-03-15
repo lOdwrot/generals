@@ -1,13 +1,23 @@
 .chat-wrapper {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    right: 0;
+    width: 25%;
+    max-width: 350px;
 }
 
 .chat-history {
     height: 200px;
     border: solid 1px grey;
+    border-radius: 3px;
     overflow-y: auto;
+}
+
+.chat-header {
+    border: solid 1px grey;
+    text-align: center;
+    border-radius: 3px;
+    font-weight: bold;
 }
 
 .new-message {

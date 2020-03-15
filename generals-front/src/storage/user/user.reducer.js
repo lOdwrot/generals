@@ -1,7 +1,7 @@
 import * as actions from './user.action'
 
 const INITIAL_STATE = {
-    userName: 'anonymus',
+    userName: 'p1',
     socketId: '',
     roomId: ''
 }
