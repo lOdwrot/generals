@@ -1,10 +1,10 @@
-export const generateMap = (
+export const generateMap = ({
     width = 16, 
     height = 16,
     castles = 12,
     mountains = 28,
     players = ['p1', 'p2']
-) => {
+}) => {
     let result = []
     // generate map
     const generateCoordinates = () => ([
@@ -47,13 +47,17 @@ export const generateMap = (
 
     let i = 0
     while(true) {
-        const [x, y] = generateCoordinates()
-        if(result[x][y].type != 'plain') continue
+        let [x, y] = generateCoordinates()
+        if(i == 0) {
+            x = 5
+            y = 5
+        }
+        
         result[x][y] = ({
             ...result[x][y],
             type: 'capitol',
             owner: players[i],
-            units: 1
+            units: 99
         })
         
         if (++i === players.length) break

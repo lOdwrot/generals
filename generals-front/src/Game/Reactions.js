@@ -2,6 +2,9 @@ import store from '../storage/store'
 import { setActiveField, setCommands } from '../storage/game/game.action'
 import { activeFieldSelector, commandsSelector } from '../storage/game/game.selector'
 import uniqid from 'uniqid'
+import { addCommand } from '../socket/socketManager'
+
+const CMD_MOVE_ALL = 'MOVE_ALL'
 
 export const clickOnActiveField = (x, y) => store.dispatch(setActiveField({x, y}))
 export const keyboardListener = ({key}) => {
@@ -27,10 +30,14 @@ export const keyboardListener = ({key}) => {
         direction = 'r'
     }
 
-    store.dispatch(setActiveField({x, y}))
-    store.dispatch(setCommands([...commands,{
+    const nextCommand = {
         from: {x: prevX, y: prevY},
         direction,
-        id: uniqid()
-    }]))
+        id: uniqid(),
+        type: CMD_MOVE_ALL
+    }
+
+    addCommand(nextCommand)
+    store.dispatch(setActiveField({x, y}))
+    store.dispatch(setCommands([...commands, nextCommand]))
 }

@@ -3,6 +3,7 @@ import http from 'http'
 import bodyParser from 'body-parser'
 import socketIO from 'socket.io'
 import uniqid from 'uniqid'
+import { Game } from './gameUtils/Game'
 
 const PORT = process.env.PORT || 5500
 
@@ -21,6 +22,7 @@ const io = socketIO(server)
 const rooms = {}
 const users = {}
 
+const games = {}
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
         const roomId = uniqid()
@@ -30,11 +32,15 @@ io.on('connection', (socket) => {
             roomId
         }
 
-        rooms[roomId] = [user]
+        rooms[roomId] = {
+            users: [user],
+            gane: null
+        }
+
         users[socket.id] = user
         socket.join(roomId)
         socket.emit('joined', user)
-        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId])
+        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
     })
 
     socket.on('join', ({roomId, userName}) => {
@@ -45,11 +51,11 @@ io.on('connection', (socket) => {
             roomId
         }
 
-        rooms[roomId] = [...rooms[roomId], user]
+        rooms[roomId].users = [...rooms[roomId].users, user]
         users[socket.id] = user
         socket.join(roomId)
         socket.emit('joined', user)
-        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId])
+        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
     })
 
     socket.on('sendMessage', message => {
@@ -58,8 +64,29 @@ io.on('connection', (socket) => {
         io.to(user.roomId).emit('chat', `${user.userName}: ${message}`)
     })
 
-    socket.on('start', () => {
-        socket.emit
+    socket.on('start', (gameParams) => {
+        const user = users[socket.id]
+        const room = rooms[user.roomId]
+        const game = new Game(room.users)
+        room.game = game
+        io.to(user.roomId).emit('updateBoard', game.board)
+        let intervalId = setInterval(() => {
+            const commandToRemoveIds = game.tic()
+            Object.keys(commandToRemoveIds)
+                .forEach(socketId => {
+                    console.log('socketId: ' , commandToRemoveIds[socketId])
+                    if(!commandToRemoveIds[socketId].length) return
+                    io.to(socketId).emit('removeCommands', commandToRemoveIds[socketId])
+                })
+
+            io.to(user.roomId).emit('updateBoard', game.board)
+        }, 1000)
+    })
+
+    socket.on('addCommand', command => {
+        const user = users[socket.id]
+        const room = rooms[user.roomId]
+        room.game.addCommand(user.socketId, command)
     })
 })
 

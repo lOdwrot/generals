@@ -21,3 +21,9 @@ export const setCommands = (commands) => ({
     type: SET_COMMANDS,
     payload: commands
 })
+
+export const REMOVE_COMMANDS = 'game.removeCommands'
+export const removeCommands = (commandIds) => ({
+    type: REMOVE_COMMANDS,
+    payload: commandIds
+})

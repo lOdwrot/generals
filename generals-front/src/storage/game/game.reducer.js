@@ -17,6 +17,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, activeField: action.payload}
         case actions.SET_COMMANDS:
             return {...state, commands: action.payload}
+        case actions.REMOVE_COMMANDS:
+            return {...state, commands: state.commands.filter(v => !action.payload.includes(v.id))}
         default:
             return state
     }

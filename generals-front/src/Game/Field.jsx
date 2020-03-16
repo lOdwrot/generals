@@ -12,7 +12,7 @@ export default ({
     const user = useSelector(userSelector)
     const activeField = useSelector(activeFieldSelector)
     const { type, owner, units, x, y } = field
-    const isOwner = user.userName === owner
+    const isOwner = user.socketId === owner
 
     const handleClickField = () => isOwner && clickOnActiveField(x, y)
     

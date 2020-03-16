@@ -6,6 +6,7 @@ import { Button } from 'antd'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
+import { startGame } from '../socket/socketManager'
 
 const mapGenerator = (
     width = 16, 
@@ -81,15 +82,13 @@ export default () => {
         return () => window.removeEventListener('keypress', keyboardListener)
     }, [])
 
-    const handleClickGenerat = () => dispatch(setBoard(mapGenerator()))
+    const handleClickGenerat = () => startGame()
     const commandsForFields = commands.reduce((acc, v) => {
         const key = `${v.from.x}-${v.from.y}`
         if(!acc[key]) acc[key] = []
         acc[key].push(v)
         return acc
     }, {})
-    
-    console.log('#####', commandsForFields)
 
     return (
         <div>
