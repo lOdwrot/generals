@@ -91,6 +91,12 @@ io.on('connection', (socket) => {
         const room = rooms[user.roomId]
         room.game.addCommand(user.socketId, command)
     })
+
+    socket.on('eraseCommands', commandIds => {
+        const user = users[socket.id]
+        const room = rooms[user.roomId]
+        room.game.eraseCommands(user.socketId, commandIds)
+    })
 })
 
 console.log('Server initialized sucessfully!!')

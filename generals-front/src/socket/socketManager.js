@@ -7,15 +7,10 @@ import { addMessage } from '../storage/messages/message.action'
 
 const io = socketIO(config.address)
 
-export const createRoom = () => io.emit('createRoom', store.getState().user.userName)
-export const joinToRoom = (roomId) => io.emit('join', {
-    roomId,
-    userName: store.getState().user.userName
-})
-
 // GAME
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
+export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
 io.on('updateBoard', board => store.dispatch(setBoard(board)))
 io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds)))
 
@@ -23,6 +18,12 @@ io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds))
 export const sendMessage = (message) => io.emit('sendMessage', message)
 io.on('chat', message => store.dispatch(addMessage(message)))
 
+// ROOM
+export const createRoom = () => io.emit('createRoom', store.getState().user.userName)
+export const joinToRoom = (roomId) => io.emit('join', {
+    roomId,
+    userName: store.getState().user.userName
+})
 io.on('joined', user => store.dispatch(setUser(user)))
 io.on('refreshPlayersInRoom', players => store.dispatch(setPlayers(players)))
 io.on('noRoom', () => window.alert('No room with given id'))

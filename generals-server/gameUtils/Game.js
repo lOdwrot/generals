@@ -13,9 +13,14 @@ const getNextCoordinates = (from, direction) => {
 }
 
 export class Game {
+    UNITS_INSTANTIATION_INTERVAL = 2500
+    CASTLE_INSTANTIATION_INTERVAL = 1
+
     constructor(players) {
         this.tourCounter = 0
         this.intervalId = null
+        this.loosers = []
+        this.players = players
         this.board = generateMap({
             width: 16, 
             height: 16,
@@ -35,6 +40,8 @@ export class Game {
 
     tic() {
         const removedCommands = {}
+
+        this.instantiateUnits()
         Object.keys(this.moves).forEach(socketId => {
             let moves = this.moves[socketId]
             let executableIndex = moves.findIndex(v => this.isCommandExecutable(v, socketId))
@@ -62,14 +69,49 @@ export class Game {
 
                 const fromField = this.getBoardField(from)
                 const toField = this.getBoardField(to)
-                toField.units = fromField.units - 1
-                fromField.units = 1
-                toField.owner = socketId
+                const movedUnits = fromField.units - 1
+                fromField.units = fromField.units - movedUnits
+
+                if(toField.owner === fromField.owner) {
+                    toField.units += movedUnits
+                    return
+                }
+
+                if (toField.units < movedUnits) {
+                    if (toField.type == 'capitol') {
+                        this.conquerPlayer(fromField.owner, toField.owner, toField)
+                    }
+                    toField.owner = socketId
+                }
+                
+                toField.units = Math.abs(toField.units - movedUnits)
+                
                 break;
             }
             default:
                 break;
         }
+    }
+
+    instantiateUnits() {
+        const ocupiedFields = this.board.flat().filter(v => v.owner != 'n')
+        if (this.tourCounter % this.UNITS_INSTANTIATION_INTERVAL === 0){
+            ocupiedFields.forEach(v => v.units++)
+        } else if(this.tourCounter % this.CASTLE_INSTANTIATION_INTERVAL === 0) {
+            ocupiedFields
+                .filter(v => v.type === 'capitol' || v.type === 'castle')
+                .forEach(v => v.units++)
+        }
+    }
+
+    conquerPlayer(agressorId, victimId, capitolField) {
+        this.loosers.push(victimId)
+        this.board
+            .flat()
+            .filter(v => v.owner === victimId)
+            .forEach(v => v.owner = agressorId)
+
+        capitolField.type = 'castle'
     }
 
     isCommandExecutable(command, socketId) {
@@ -91,5 +133,11 @@ export class Game {
         return true
     }
 
+    eraseCommands(socketId, commandIds) {
+        this.moves[socketId] = this.moves[socketId]
+                                .filter(v => !commandIds.includes(v.id))
+    }
+
     getBoardField = ({x, y}) => this.board[y][x]
+    getWinner = () => this.players.legth - this.loosers.length === 1
 } 
