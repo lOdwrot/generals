@@ -83,6 +83,13 @@ io.on('connection', (socket) => {
                 })
 
             io.to(user.roomId).emit('updateBoard', game.board)
+            
+            const winner = game.getWinner()
+            if(winner) {
+                clearInterval(game.intervalId)
+                io.to(user.roomId).emit('winner', winner)
+                delete room.game
+            }
         }, 1000)
     })
 

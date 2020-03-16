@@ -13,6 +13,7 @@ export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
 io.on('updateBoard', board => store.dispatch(setBoard(board)))
 io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds)))
+io.on('winner', winner => window.alert(`${winner.userName} won!`))
 
 // CHAT
 export const sendMessage = (message) => io.emit('sendMessage', message)

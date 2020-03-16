@@ -139,5 +139,8 @@ export class Game {
     }
 
     getBoardField = ({x, y}) => this.board[y][x]
-    getWinner = () => this.players.legth - this.loosers.length === 1
+    getWinner = () => {
+        if(this.players.length - this.loosers.length > 1) return
+        return this.players.find(v => !this.loosers.includes(v.socketId))
+    }
 } 
