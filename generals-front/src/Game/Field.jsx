@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { userSelector } from '../storage/user/user.selector'
-import { activeFieldSelector } from '../storage/game/game.selector'
+import { activeFieldSelector, userColorsSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
 import { clickOnActiveField } from './Reactions'
 
@@ -10,21 +10,29 @@ export default ({
     commands
 }) => {
     const user = useSelector(userSelector)
+    const userColors = useSelector(userColorsSelector)
     const activeField = useSelector(activeFieldSelector)
     const { type, owner, units, x, y } = field
     const isOwner = user.socketId === owner
 
     const handleClickField = () => isOwner && clickOnActiveField(x, y)
+    const getBackgroundColor = () => {
+        if(owner === 'n') return 'grey'
+        return userColors[owner]
+    }
     
+    // not-visible
     return (
         <div 
             onClick={handleClickField}
-            className={classnames('board-tile not-visible', {
-                'red-tile': isOwner,
+            style={{
+                backgroundColor: getBackgroundColor(),
+                backgroundImage: getImageLink(type)
+            }}
+            className={classnames('board-tile', {
                 'clicable': isOwner,
                 'selected-field': (activeField.x === x && activeField.y === y),
             })}
-            style={{backgroundImage: getImageLink(type)}}
         >
             {(units != null) && units}
             {

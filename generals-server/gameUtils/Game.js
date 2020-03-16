@@ -15,6 +15,7 @@ const getNextCoordinates = (from, direction) => {
 export class Game {
     constructor(players) {
         this.tourCounter = 0
+        this.intervalId = null
         this.board = generateMap({
             width: 16, 
             height: 16,
@@ -36,7 +37,7 @@ export class Game {
         const removedCommands = {}
         Object.keys(this.moves).forEach(socketId => {
             let moves = this.moves[socketId]
-            let executableIndex = moves.findIndex(v => this.isCommandExecutable(v))
+            let executableIndex = moves.findIndex(v => this.isCommandExecutable(v, socketId))
             if (executableIndex >= 0) {
                 this.executeCommand(moves[executableIndex], socketId)
                 removedCommands[socketId] = moves
@@ -46,7 +47,6 @@ export class Game {
             } else {
                 removedCommands[socketId] = moves.map(v => v.id)
                 this.moves[socketId] = []
-                console.log('Not found executable command for socket: ' + socketId)
             }
         })
         this.tourCounter++
@@ -72,6 +72,24 @@ export class Game {
         }
     }
 
+    isCommandExecutable(command, socketId) {
+        if (command.type === 'MOVE_ALL') {
+            const {from, direction} = command
+                const to = getNextCoordinates(from, direction)
+
+                const fromField = this.getBoardField(from)
+                const toField = this.getBoardField(to)
+
+                if(
+                    !fromField || !toField ||
+                    fromField.owner != socketId ||
+                    fromField.units < 2 ||
+                    toField.type === 'mountain'
+                ) return false
+        }
+
+        return true
+    }
+
     getBoardField = ({x, y}) => this.board[y][x]
-    isCommandExecutable = () => true
 } 

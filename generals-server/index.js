@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 const io = socketIO(server)
 const rooms = {}
 const users = {}
+const colors = ['red', 'green', 'cornflowerblue', 'orange', 'black', 'purple', 'brown', 'blue']
 
 const games = {}
 io.on('connection', (socket) => {
@@ -28,6 +29,7 @@ io.on('connection', (socket) => {
         const roomId = uniqid()
         const user ={
             socketId: socket.id,
+            color: colors[0],
             userName,
             roomId
         }
@@ -45,13 +47,15 @@ io.on('connection', (socket) => {
 
     socket.on('join', ({roomId, userName}) => {
         if(!rooms[roomId]) return socket.emit('noRoom')
+        const roomUsers = rooms[roomId].users
         const user ={
             socketId: socket.id,
+            color: colors[roomUsers.length],
             userName,
             roomId
         }
 
-        rooms[roomId].users = [...rooms[roomId].users, user]
+        rooms[roomId].users = [...roomUsers, user]
         users[socket.id] = user
         socket.join(roomId)
         socket.emit('joined', user)
@@ -70,11 +74,10 @@ io.on('connection', (socket) => {
         const game = new Game(room.users)
         room.game = game
         io.to(user.roomId).emit('updateBoard', game.board)
-        let intervalId = setInterval(() => {
+        game.intervalId = setInterval(() => {
             const commandToRemoveIds = game.tic()
             Object.keys(commandToRemoveIds)
                 .forEach(socketId => {
-                    console.log('socketId: ' , commandToRemoveIds[socketId])
                     if(!commandToRemoveIds[socketId].length) return
                     io.to(socketId).emit('removeCommands', commandToRemoveIds[socketId])
                 })
