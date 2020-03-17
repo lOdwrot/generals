@@ -27,3 +27,9 @@ export const removeCommands = (commandIds) => ({
     type: REMOVE_COMMANDS,
     payload: commandIds
 })
+
+export const SET_BATTLE_MODE = 'game.setBattleMode'
+export const setBattleMode = (isBattleMode) => ({
+    type: SET_BATTLE_MODE,
+    payload: isBattleMode
+})

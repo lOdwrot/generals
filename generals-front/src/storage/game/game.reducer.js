@@ -5,7 +5,8 @@ const INITIAL_STATE = {
     board: [[]],
     activeField: {x: -1, y: -1},
     commands: [],
-    userColors: {}
+    userColors: {},
+    isBattleMode: false
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -24,6 +25,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, commands: action.payload}
         case actions.REMOVE_COMMANDS:
             return {...state, commands: state.commands.filter(v => !action.payload.includes(v.id))}
+        case actions.SET_BATTLE_MODE:
+            return {...state, isBattleMode: action.payload}
         default:
             return state
     }

@@ -35,7 +35,8 @@ io.on('connection', (socket) => {
 
         rooms[roomId] = {
             users: [user],
-            gane: null
+            game: null,
+            settings: null
         }
 
         users[socket.id] = user
@@ -67,11 +68,20 @@ io.on('connection', (socket) => {
         io.to(user.roomId).emit('chat', `${user.userName}: ${message}`)
     })
 
-    socket.on('start', (gameParams) => {
+    socket.on('setRoomSettings', settings => {
         const user = users[socket.id]
         const room = rooms[user.roomId]
-        const game = new Game(room.users)
+        applyRoomSettings(settings, room, user.socketId)
+    })
+
+    socket.on('start', settings => {
+        const user = users[socket.id]
+        const room = rooms[user.roomId]
+        applyRoomSettings(settings, room, user.socketId)
+        
+        const game = new Game(room.users, settings)
         room.game = game
+        io.to(user.roomId).emit('startBattle')
         io.to(user.roomId).emit('updateBoard', game.board)
         game.intervalId = setInterval(() => {
             const commandToRemoveIds = game.tic()
@@ -89,7 +99,7 @@ io.on('connection', (socket) => {
             //     io.to(user.roomId).emit('winner', winner)
             //     delete room.game
             // }
-        }, 1000)
+        }, game.turnDuration)
     })
 
     socket.on('addCommand', command => {
@@ -104,5 +114,12 @@ io.on('connection', (socket) => {
         room.game.eraseCommands(user.socketId, commandIds)
     })
 })
+
+const applyRoomSettings = (settings, room, modifierId) => {
+    room.settings = settings
+    room.users
+        .filter(v => v.socketId != modifierId)
+        .forEach(v => io.to(v.socketId).emit('setRoomSettings', settings))
+}
 
 console.log('Server initialized sucessfully!!')

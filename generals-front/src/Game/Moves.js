@@ -19,6 +19,11 @@ export const move = (key) => {
         !isPositionValid(prevX, prevY, board)
     ) return
 
+    const tileTo = board[y][x]
+    if(tileTo.isVisible && tileTo.type === 'mountain') {
+        return
+    }
+
     const nextCommand = {
         from: {x: prevX, y: prevY},
         direction,

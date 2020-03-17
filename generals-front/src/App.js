@@ -5,13 +5,24 @@ import Lobby from './Lobby/Lobby.jsx';
 import LiveChat from './LiveChat/LiveChat';
 import Board from './Game/Board';
 import Settings from './Settings/Settings';
+import { useSelector } from 'react-redux';
+import { isBattleModeSelector } from './storage/game/game.selector';
 function App() {
+  const isBatlletMode = useSelector(isBattleModeSelector)
   return (
     <div>
       <LiveChat/>
-      <Lobby/>
-      <Settings/>
-      <Board/>
+      {
+        !isBatlletMode &&
+        <>
+          <Lobby/>
+          <Settings/>
+        </>
+      }
+      {
+        isBatlletMode &&
+        <Board/>
+      }
     </div>
   );
 }

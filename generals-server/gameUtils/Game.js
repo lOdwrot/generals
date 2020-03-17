@@ -16,16 +16,32 @@ export class Game {
     UNITS_INSTANTIATION_INTERVAL = 2500
     CASTLE_INSTANTIATION_INTERVAL = 1
 
-    constructor(players) {
+    constructor(players, settings) {
+        const {
+            mapWidth,
+            mapHeight,
+            gameMode,
+            nonAggression,
+            castlesDensity,
+            mountainDensity,
+            castleProduction,
+            fieldProduction,
+            turnDuration,
+        } = settings
+
         this.tourCounter = 0
         this.intervalId = null
         this.loosers = []
         this.players = players
+        this.nonAggression = nonAggression
+        this.turnDuration = turnDuration
+        this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
+        this.UNITS_INSTANTIATION_INTERVAL = fieldProduction
         this.board = generateMap({
-            width: 16, 
-            height: 16,
-            castles: 12,
-            mountains: 28,
+            width: mapWidth, 
+            height: mapHeight,
+            castles: (mapWidth + mapHeight) * castlesDensity,
+            mountains: (mapWidth * mapHeight) * 0.15 * mountainDensity,
             players: players.map(v => v.socketId)
         }),
         this.moves = players.reduce((acc, user) => ({

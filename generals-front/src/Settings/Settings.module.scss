@@ -9,11 +9,14 @@
     text-align: center;
     width: 550px;
     border: solid 1px gray;
-    border-radius: 5px;
-    height: 50vh;
-    max-height: 600px;
+    border-radius: 5px;    
     margin-top: 25px;
-    overflow-y: auto;
     padding-left: 16px;
     padding-right: 16px;
+}
+
+.settings-list {
+    overflow-y: auto;
+    max-height: 600px;
+    height: 50vh;
 }

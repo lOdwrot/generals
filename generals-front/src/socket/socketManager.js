@@ -2,8 +2,9 @@ import socketIO from 'socket.io-client'
 import config from '../config'
 import store from '../storage/store'
 import { setUser } from '../storage/user/user.action'
-import { setPlayers, setBoard, removeCommands } from '../storage/game/game.action'
+import { setPlayers, setBoard, removeCommands, setBattleMode } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
+import { replaceGameSetting } from '../storage/settings/settings.action'
 
 const io = socketIO(config.address)
 
@@ -11,6 +12,7 @@ const io = socketIO(config.address)
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
+io.on('startBattle', () => store.dispatch(setBattleMode(true)))
 io.on('updateBoard', board => {
     const socketId = store.getState().user.socketId
     board
@@ -38,6 +40,8 @@ export const joinToRoom = (roomId) => io.emit('join', {
     roomId,
     userName: store.getState().user.userName
 })
+export const setRoomSettings = (settings) => io.emit('setRoomSettings', settings)
+io.on('setRoomSettings', settings => store.dispatch(replaceGameSetting(settings)))
 io.on('joined', user => store.dispatch(setUser(user)))
 io.on('refreshPlayersInRoom', players => store.dispatch(setPlayers(players)))
 io.on('noRoom', () => window.alert('No room with given id'))

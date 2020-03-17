@@ -14,6 +14,7 @@ export default () => {
     const [roomId, setRoomId] = useState('')
     const [isNameConfirmed, setIsNameConfirmed] = useState(false)
     const user = useSelector(userSelector)
+    const isAllDisabled = !!user.roomId
     
     return (
         <div className={styles['lobby-wrapper']}>
@@ -25,10 +26,11 @@ export default () => {
                             onChange={e => dispatch(setUserName(e.target.value))}
                             value={user.userName}
                             placeholder='User Name'
-                            disabled={isNameConfirmed}
+                            disabled={isNameConfirmed || isAllDisabled}
                         />
                         <Button 
                             type='primary'
+                            disabled={isNameConfirmed || isAllDisabled}
                             onClick={() => setIsNameConfirmed(true)}
                         >
                             Confirm
