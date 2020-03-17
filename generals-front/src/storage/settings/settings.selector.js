@@ -1,0 +1,1 @@
+export const gameSettingsSelector = state => state.settings.gameSettings

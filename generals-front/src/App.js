@@ -4,12 +4,13 @@ import io from './socket/socketManager'
 import Lobby from './Lobby/Lobby.jsx';
 import LiveChat from './LiveChat/LiveChat';
 import Board from './Game/Board';
-import logo from './logo.svg'
+import Settings from './Settings/Settings';
 function App() {
   return (
     <div>
-      <Lobby/>
       <LiveChat/>
+      <Lobby/>
+      <Settings/>
       <Board/>
     </div>
   );

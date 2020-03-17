@@ -23,6 +23,7 @@ export default () => {
                     <div style={{display: 'flex'}}>
                         <Input
                             onChange={e => dispatch(setUserName(e.target.value))}
+                            value={user.userName}
                             placeholder='User Name'
                             disabled={isNameConfirmed}
                         />

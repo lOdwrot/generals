@@ -1,0 +1,19 @@
+.settings-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-content-box {
+    text-align: center;
+    width: 550px;
+    border: solid 1px gray;
+    border-radius: 5px;
+    height: 50vh;
+    max-height: 600px;
+    margin-top: 25px;
+    overflow-y: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
