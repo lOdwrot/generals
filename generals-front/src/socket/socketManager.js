@@ -11,7 +11,20 @@ const io = socketIO(config.address)
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
-io.on('updateBoard', board => store.dispatch(setBoard(board)))
+io.on('updateBoard', board => {
+    const socketId = store.getState().user.socketId
+    board
+        .flat()
+        .filter(v => v.owner === socketId)
+        .forEach((({x, y}) => {
+            for(let vX = x -1; vX <= x + 1; vX++)
+                for(let vY = y -1; vY <= y + 1; vY++) 
+                    if(board[vY][vX])
+                        board[vY][vX].isVisible = true
+        }))
+
+    store.dispatch(setBoard(board))
+})
 io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds)))
 io.on('winner', winner => window.alert(`${winner.userName} won!`))
 

@@ -21,9 +21,8 @@ app.get('/', (req, res) => {
 const io = socketIO(server)
 const rooms = {}
 const users = {}
-const colors = ['red', 'green', 'cornflowerblue', 'orange', 'black', 'purple', 'brown', 'blue']
+const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen']
 
-const games = {}
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
         const roomId = uniqid()
@@ -85,11 +84,11 @@ io.on('connection', (socket) => {
             io.to(user.roomId).emit('updateBoard', game.board)
             
             const winner = game.getWinner()
-            if(winner) {
-                clearInterval(game.intervalId)
-                io.to(user.roomId).emit('winner', winner)
-                delete room.game
-            }
+            // if(winner) {
+            //     clearInterval(game.intervalId)
+            //     io.to(user.roomId).emit('winner', winner)
+            //     delete room.game
+            // }
         }, 1000)
     })
 

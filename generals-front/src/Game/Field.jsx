@@ -12,11 +12,12 @@ export default ({
     const user = useSelector(userSelector)
     const userColors = useSelector(userColorsSelector)
     const activeField = useSelector(activeFieldSelector)
-    const { type, owner, units, x, y } = field
+    const { type, owner, units, x, y, isVisible } = field
     const isOwner = user.socketId === owner
 
     const handleClickField = () => isOwner && clickOnActiveField(x, y)
     const getBackgroundColor = () => {
+        if (!isVisible === true) return '#202020'
         if(owner === 'n') return 'grey'
         return userColors[owner]
     }
