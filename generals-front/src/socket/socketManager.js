@@ -19,7 +19,7 @@ io.on('updateBoard', board => {
         .forEach((({x, y}) => {
             for(let vX = x -1; vX <= x + 1; vX++)
                 for(let vY = y -1; vY <= y + 1; vY++) 
-                    if(board[vY][vX])
+                    if(board[vY] && board[vY][vX])
                         board[vY][vX].isVisible = true
         }))
 

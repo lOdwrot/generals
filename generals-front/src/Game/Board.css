@@ -1,5 +1,6 @@
 .board-container {
     padding-left: 55px;
+    user-select: none;
 }
 
 .board-row {
@@ -14,7 +15,7 @@
     width: 45px;
     height: 45px;
     border: solid 1px black;
-    font-weight: 600;
+    font-weight: 400;
     color: white;
     background-repeat: no-repeat;
     background-origin: content-box;

@@ -28,14 +28,14 @@ export default ({
             onClick={handleClickField}
             style={{
                 backgroundColor: getBackgroundColor(),
-                backgroundImage: getImageLink(type)
+                backgroundImage: getImageLink(type, isVisible)
             }}
             className={classnames('board-tile', {
                 'clicable': isOwner,
                 'selected-field': (activeField.x === x && activeField.y === y),
             })}
         >
-            {(units != null) && units}
+            {!!isVisible && (units != null) && units}
             {
                 commands.map(v => (
                     <div className={getClassForArrow(v)}>
@@ -47,21 +47,13 @@ export default ({
     )
 }
 
-function getImageLink(type) {
-    let imagePath;
-    switch (type) {
-        case 'castle':
-            imagePath = '/city.png'
-            break;
-        case 'mountain':
-            imagePath = '/mountain.png'
-            break;
-        case 'capitol':
-            imagePath = '/crown.png'
-            break;
-        default:
-            return '';
-    }
+function getImageLink(type, isVisible) {
+    let imagePath = '';
+    if(!isVisible && (type === 'castle' || type === 'mountain')) imagePath = '/obstacle.png'
+    else if(type === 'castle') imagePath = '/city.png'
+    else if(type === 'mountain') imagePath = '/mountain.png'
+    else if(type === 'capitol') imagePath = '/crown.png'
+
     return `url(${process.env.PUBLIC_URL + imagePath})`
 }
   
