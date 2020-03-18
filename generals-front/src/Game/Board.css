@@ -1,6 +1,11 @@
+body {
+    overflow: hidden
+}
+
 .board-container {
-    padding-left: 55px;
     user-select: none;
+    position: absolute;
+    transition: transform 0.1s;
 }
 
 .board-row {

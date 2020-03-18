@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { boardSelector, commandsSelector } from '../storage/game/game.selector'
 import './Board.css'
@@ -8,10 +8,36 @@ import { keyboardListener } from './Reactions'
 export default () => {
     const board = useSelector(boardSelector)
     const commands = useSelector(commandsSelector)
+    const mouseMoveListener = ({movementX, movementY, buttons}) => {
+        if(buttons !== 1) return
+        const board = document.getElementById('board')
+        const {left, top} = board.style
+        board.style.left = (Number(left.slice(0, -2)) + movementX) + 'px'
+        board.style.top = (Number(top.slice(0, -2)) + movementY) + 'px'
+
+    }
+
+    const mouseWheelListener = ({deltaY}) => {
+        const board = document.getElementById('board')
+        const currnetScale = Number(board.style.transform.slice(6, -1))
+        const nextScale = currnetScale + (deltaY > 0
+                ? -0.1
+                : 0.1
+            )
+        if (nextScale > 2 || nextScale < 0.5) return
+
+        board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
+    }
 
     useEffect(() => {
         window.addEventListener('keypress', keyboardListener)
-        return () => window.removeEventListener('keypress', keyboardListener)
+        window.addEventListener('mousemove', mouseMoveListener)
+        window.addEventListener('mousewheel', mouseWheelListener)
+        return () => {
+            window.removeEventListener('keypress', keyboardListener)
+            window.removeEventListener('mousemove', mouseMoveListener)
+            window.removeEventListener('mousewheel', mouseWheelListener)
+        }
     }, [])
 
     const commandsForFields = commands.reduce((acc, v) => {
@@ -23,7 +49,11 @@ export default () => {
 
     return (
         <div>
-            <div className='board-container'>
+            <div
+                id='board'
+                className='board-container'
+                style={{left: '10px', top: "10px", transform: "scale(1)"}}
+            >
                 {
                     board.map((row, index) => (
                         <div key={index} className='board-row '>

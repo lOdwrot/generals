@@ -66,7 +66,6 @@ export default () => {
                     </FormItem>
                 }
             </div>
-            <GameInfo/>
         </div>
     )
 }

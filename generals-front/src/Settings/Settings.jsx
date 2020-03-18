@@ -74,7 +74,7 @@ export default () => {
                             <Slider
                                 disabled={!isHost}
                                 min={15}
-                                max={40}
+                                max={35}
                                 value={mapWidth}
                                 onChange={(v) => handleChangeSetting('mapWidth', v)}
                             />
@@ -83,7 +83,7 @@ export default () => {
                             <Slider
                                 disabled={!isHost}
                                 min={15}
-                                max={40}
+                                max={35}
                                 value={mapHeight}
                                 onChange={(v) => handleChangeSetting('mapHeight', v)}
                             />

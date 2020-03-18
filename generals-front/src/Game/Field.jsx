@@ -49,10 +49,11 @@ export default ({
 
 function getImageLink(type, isVisible) {
     let imagePath = '';
+    isVisible = isVisible || window.debug
     if(!isVisible && (type === 'castle' || type === 'mountain')) imagePath = '/obstacle.png'
     else if(type === 'castle') imagePath = '/city.png'
     else if(type === 'mountain') imagePath = '/mountain.png'
-    else if(type === 'capitol') imagePath = '/crown.png'
+    else if(isVisible && type === 'capitol') imagePath = '/crown.png'
 
     return `url(${process.env.PUBLIC_URL + imagePath})`
 }

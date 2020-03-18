@@ -37,11 +37,13 @@ export class Game {
         this.turnDuration = turnDuration
         this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
         this.UNITS_INSTANTIATION_INTERVAL = fieldProduction
+        // TO FIX
+        // coordinates missmatch
         this.board = generateMap({
-            width: mapWidth, 
-            height: mapHeight,
-            castles: (mapWidth + mapHeight) * castlesDensity,
-            mountains: (mapWidth * mapHeight) * 0.15 * mountainDensity,
+            width: mapHeight, 
+            height: mapWidth,
+            castles: (mapWidth + mapHeight) * 0.85 * castlesDensity,
+            mountains: (mapWidth * mapHeight) * 0.2 * mountainDensity,
             players: players.map(v => v.socketId)
         }),
         this.moves = players.reduce((acc, user) => ({

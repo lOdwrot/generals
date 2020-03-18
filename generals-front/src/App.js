@@ -7,10 +7,12 @@ import Board from './Game/Board';
 import Settings from './Settings/Settings';
 import { useSelector } from 'react-redux';
 import { isBattleModeSelector } from './storage/game/game.selector';
+import GameInfo from './GameInfo/GameInfo';
 function App() {
   const isBatlletMode = useSelector(isBattleModeSelector)
   return (
     <div>
+      <GameInfo/>
       <LiveChat/>
       {
         !isBatlletMode &&
