@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 const io = socketIO(server)
 const rooms = {}
 const users = {}
-const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen']
+const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen', 'aqua', 'white', 'blueviolet']
 
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
@@ -48,9 +48,13 @@ io.on('connection', (socket) => {
     socket.on('join', ({roomId, userName}) => {
         if(!rooms[roomId]) return socket.emit('noRoom')
         const roomUsers = rooms[roomId].users
+        const usedColors = roomUsers.map(v => v.color)
+        const color = colors
+                        .filter(v => !usedColors.includes(v))[0]
+
         const user ={
             socketId: socket.id,
-            color: colors[roomUsers.length],
+            color,
             userName,
             roomId
         }
@@ -113,6 +117,8 @@ io.on('connection', (socket) => {
         const room = rooms[user.roomId]
         room.game.eraseCommands(user.socketId, commandIds)
     })
+
+    socket.on('disconnect', () => handleDisconnect(socket.id))
 })
 
 const applyRoomSettings = (settings, room, modifierId) => {
@@ -120,6 +126,24 @@ const applyRoomSettings = (settings, room, modifierId) => {
     room.users
         .filter(v => v.socketId != modifierId)
         .forEach(v => io.to(v.socketId).emit('setRoomSettings', settings))
+}
+
+const handleDisconnect = (socketId) => {
+    const user = users[socketId]
+    if(!user) return
+    delete users[socketId]
+
+    const room = rooms[user.roomId]
+    if(!room) return
+    room.users = room.users.filter(v => v.socketId !== socketId)
+
+    if(room.users.length > 0) {
+        io.to(user.roomId).emit('refreshPlayersInRoom', room.users)
+        return
+    }
+
+    clearInterval(room.game && room.game.intervalId)
+    delete rooms[user.roomId]
 }
 
 console.log('Server initialized sucessfully!!')
