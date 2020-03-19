@@ -89,7 +89,11 @@ io.on('connection', (socket) => {
         io.to(user.roomId).emit('startBattle')
         io.to(user.roomId).emit('updateBoard', game.board)
         game.intervalId = setInterval(() => {
-            const {removedCommands, usersStats, tourCounter, newLoosers} = game.tic()
+            const {removedCommands, usersStats, tourCounter, newLoosers, endOfPeace} = game.tic()
+            if(endOfPeace) {
+                io.to(user.roomId).emit('endOfPeace')
+            } 
+
             Object.keys(removedCommands)
                 .forEach(socketId => {
                     if(!removedCommands[socketId].length) return

@@ -5,6 +5,7 @@ import { setUser } from '../storage/user/user.action'
 import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
+import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic } from '../audioPlayer/audioPlayer'
 
 const io = socketIO(config.address)
 
@@ -12,12 +13,23 @@ const io = socketIO(config.address)
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
-io.on('startBattle', () => store.dispatch(setPlayerRole('fighter')))
+io.on('startBattle', () => {
+    playBattleStartMusic()
+    setTimeout(() => playPeacfullBackgoundMusic(), 6000)
+    store.dispatch(setPlayerRole('fighter'))
+})
 io.on('updateStats', (stats) => store.dispatch(updateStats(stats)))
-io.on('loser', () => store.dispatch(setPlayerRole('spectator')))
-io.on('winner', winner => {
+io.on('loser', () => {
+    playLostMusic()
     store.dispatch(setPlayerRole('spectator'))
-    window.alert(`${winner.userName} won!`)
+})
+io.on('winner', winner => {
+    playWinMusic()
+    store.dispatch(setPlayerRole('spectator'))
+})
+
+io.on('endOfPeace', () => {
+    playBattleMusic()
 })
 
 io.on('updateBoard', board => {

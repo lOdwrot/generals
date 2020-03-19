@@ -31,6 +31,7 @@ export class Game {
         } = settings
 
         this.tourCounter = 0
+        this.unitMovesCounter = 0
         this.intervalId = null
         this.loosers = []
         this.players = players
@@ -77,10 +78,20 @@ export class Game {
             }
         })
         
-        if (this.tourCounter % MOVE_TO_RESP_RATIO === 0) this.instantiateUnits()
+        if (this.unitMovesCounter % MOVE_TO_RESP_RATIO === 0) {
+            this.tourCounter++
+            this.instantiateUnits()
+        }
+
+        this.unitMovesCounter++
         
-        if (this.tourCounter === this.nonAggression) this.isNonAggresionPactValid = false
-        this.tourCounter++
+        let endOfPeace = false
+        if (this.tourCounter === this.nonAggression) {
+            this.isNonAggresionPactValid = false
+            if(this.nonAggression >= 120) {
+                endOfPeace = true
+            }
+        }
         
         const nextUserStats = this.calculateUserStats()
         let newLoosers = this.usersStats 
@@ -94,6 +105,7 @@ export class Game {
             tourCounter: this.tourCounter,
             removedCommands,
             newLoosers,
+            endOfPeace
         }
     }
 
