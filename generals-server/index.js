@@ -101,11 +101,11 @@ io.on('connection', (socket) => {
             newLoosers.forEach(v => io.to(v).emit('loser'))
             
             const winner = game.getWinner()
-            // if(winner) {
-            //     clearInterval(game.intervalId)
-            //     io.to(user.roomId).emit('winner', winner)
-            //     delete room.game
-            // }
+            if(winner) {
+                clearInterval(game.intervalId)
+                io.to(user.roomId).emit('winner', winner)
+                delete room.game
+            }
         }, (game.turnDuration / MOVE_TO_RESP_RATIO))
     })
 
