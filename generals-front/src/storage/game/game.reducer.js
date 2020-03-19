@@ -6,7 +6,9 @@ const INITIAL_STATE = {
     activeField: {x: -1, y: -1},
     commands: [],
     userColors: {},
-    isBattleMode: false
+    playerRole: 'lobby',
+    usersStats: {},
+    tourCounter: 0,
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -25,8 +27,10 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, commands: action.payload}
         case actions.REMOVE_COMMANDS:
             return {...state, commands: state.commands.filter(v => !action.payload.includes(v.id))}
-        case actions.SET_BATTLE_MODE:
-            return {...state, isBattleMode: action.payload}
+        case actions.SET_PLAYER_ROLE:
+            return {...state, playerRole: action.payload}
+        case actions.UPDATE_STATS:
+            return {...state, ...action.payload}
         default:
             return state
     }

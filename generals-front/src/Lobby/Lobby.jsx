@@ -3,7 +3,6 @@ import { Button, Input, Form } from 'antd';
 import { createRoom, joinToRoom } from '../socket/socketManager';
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserName } from '../storage/user/user.action';
-import GameInfo from '../GameInfo/GameInfo';
 import styles from './Lobby.module.scss'
 import { userSelector } from '../storage/user/user.selector';
 

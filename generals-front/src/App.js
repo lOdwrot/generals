@@ -6,23 +6,23 @@ import LiveChat from './LiveChat/LiveChat';
 import Board from './Game/Board';
 import Settings from './Settings/Settings';
 import { useSelector } from 'react-redux';
-import { isBattleModeSelector } from './storage/game/game.selector';
 import GameInfo from './GameInfo/GameInfo';
+import { playerRoleSelector } from './storage/game/game.selector';
 function App() {
-  const isBatlletMode = useSelector(isBattleModeSelector)
+  const playerRole = useSelector(playerRoleSelector)
   return (
     <div>
       <GameInfo/>
       <LiveChat/>
       {
-        !isBatlletMode &&
+        playerRole ==='lobby' &&
         <>
           <Lobby/>
           <Settings/>
         </>
       }
       {
-        isBatlletMode &&
+        (playerRole === 'fighter' || playerRole === 'spectator') &&
         <Board/>
       }
     </div>

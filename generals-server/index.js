@@ -26,7 +26,7 @@ const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', '
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
         const roomId = uniqid()
-        const user ={
+        const user = {
             socketId: socket.id,
             color: colors[0],
             userName,
@@ -88,14 +88,16 @@ io.on('connection', (socket) => {
         io.to(user.roomId).emit('startBattle')
         io.to(user.roomId).emit('updateBoard', game.board)
         game.intervalId = setInterval(() => {
-            const commandToRemoveIds = game.tic()
-            Object.keys(commandToRemoveIds)
+            const {removedCommands, usersStats, tourCounter, newLoosers} = game.tic()
+            Object.keys(removedCommands)
                 .forEach(socketId => {
-                    if(!commandToRemoveIds[socketId].length) return
-                    io.to(socketId).emit('removeCommands', commandToRemoveIds[socketId])
+                    if(!removedCommands[socketId].length) return
+                    io.to(socketId).emit('removeCommands', removedCommands[socketId])
                 })
 
             io.to(user.roomId).emit('updateBoard', game.board)
+            io.to(user.roomId).emit('updateStats', {usersStats, tourCounter})
+            newLoosers.forEach(v => io.to(v).emit('loser'))
             
             const winner = game.getWinner()
             // if(winner) {

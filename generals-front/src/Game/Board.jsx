@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { boardSelector, commandsSelector } from '../storage/game/game.selector'
+import { boardSelector, commandsSelector, playerRoleSelector } from '../storage/game/game.selector'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
@@ -8,6 +8,8 @@ import { keyboardListener } from './Reactions'
 export default () => {
     const board = useSelector(boardSelector)
     const commands = useSelector(commandsSelector)
+    const playerRole = useSelector(playerRoleSelector)
+    
     const mouseMoveListener = ({movementX, movementY, buttons}) => {
         if(buttons !== 1) return
         const board = document.getElementById('board')
@@ -60,6 +62,7 @@ export default () => {
                             {
                                 row.map(v => (
                                     <Field
+                                        seeAll={playerRole === 'spectator' || window.debug === true}
                                         commands={commandsForFields[`${v.x}-${v.y}`] || []}
                                         field={v}
                                     />

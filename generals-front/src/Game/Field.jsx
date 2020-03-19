@@ -7,7 +7,8 @@ import { clickOnActiveField } from './Reactions'
 
 export default ({
     field,
-    commands
+    commands,
+    seeAll
 }) => {
     const user = useSelector(userSelector)
     const userColors = useSelector(userColorsSelector)
@@ -17,7 +18,7 @@ export default ({
 
     const handleClickField = () => isOwner && clickOnActiveField(x, y)
     const getBackgroundColor = () => {
-        if (!isVisible === true) return '#202020'
+        if (!seeAll && !isVisible === true) return '#202020'
         if(owner === 'n') return 'grey'
         return userColors[owner]
     }
@@ -28,14 +29,14 @@ export default ({
             onClick={handleClickField}
             style={{
                 backgroundColor: getBackgroundColor(),
-                backgroundImage: getImageLink(type, isVisible)
+                backgroundImage: getImageLink(type, isVisible || seeAll)
             }}
             className={classnames('board-tile', {
                 'clicable': isOwner,
                 'selected-field': (activeField.x === x && activeField.y === y),
             })}
         >
-            {!!isVisible && (units != null) && units}
+            {(seeAll || !!isVisible) && (units != null) && units}
             {
                 commands.map(v => (
                     <div className={getClassForArrow(v)}>

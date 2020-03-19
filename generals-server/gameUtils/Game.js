@@ -37,12 +37,13 @@ export class Game {
         this.turnDuration = turnDuration
         this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
         this.UNITS_INSTANTIATION_INTERVAL = fieldProduction
+        this.usersStats = null
         // TO FIX
         // coordinates missmatch
         this.board = generateMap({
             width: mapHeight, 
             height: mapWidth,
-            castles: (mapWidth + mapHeight) * 0.85 * castlesDensity,
+            castles: (mapWidth + mapHeight) * 0.75 * castlesDensity,
             mountains: (mapWidth * mapHeight) * 0.2 * mountainDensity,
             players: players.map(v => v.socketId)
         }),
@@ -76,7 +77,44 @@ export class Game {
         })
         this.tourCounter++
 
-        return removedCommands
+        const nextUserStats = this.calculateUserStats()
+        let newLoosers = this.usersStats 
+                            ? Object.keys(nextUserStats)
+                                .filter(v => nextUserStats[v].units === 0 && this.usersStats[v].units > 0)
+                            : []
+
+        this.usersStats = nextUserStats
+        return {
+            usersStats: this.usersStats,
+            tourCounter: this.tourCounter,
+            removedCommands,
+            newLoosers,
+        }
+    }
+
+    calculateUserStats() {
+        const userStats = this.players.reduce((acc, v) => ({
+            ...acc, 
+            [v.socketId]: {
+                units: 0,
+                lands: 0,
+                castles: 0
+            }
+        }), {})
+
+        this.board
+            .flat()
+            .forEach(({owner, units, type}) => {
+                if (owner == 'n') return
+                const stats = userStats[owner]
+                stats.units += units
+                stats.lands++
+                if (type === 'castle' || type === 'capitol') {
+                    stats.castles++ 
+                }
+            })
+
+        return userStats
     }
 
     executeCommand(command, socketId) {

@@ -6,22 +6,24 @@
     right: 0;
     border: solid 1px gray;
     border-radius: 5px;
-}
-
-.room-header {
     text-align: center;
-    font-weight: 300;
 }
 
-.player-item {
-    border-top: solid 1px gray;
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 22px 150px 50px 50px;
+}
+
+.grid-container > div {
     display: flex;
-    padding: 1px;
+    justify-content: center;
+    align-items: center;
+    border-top: solid 1px gray;
+    border-bottom: solid 1px gray;
 }
 
 .color-box {
     width: 20px;
     height: 20px;
-    margin-right: 10px;
-    padding: 1px;
 }

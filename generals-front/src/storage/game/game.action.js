@@ -28,8 +28,14 @@ export const removeCommands = (commandIds) => ({
     payload: commandIds
 })
 
-export const SET_BATTLE_MODE = 'game.setBattleMode'
-export const setBattleMode = (isBattleMode) => ({
-    type: SET_BATTLE_MODE,
-    payload: isBattleMode
+export const SET_PLAYER_ROLE = 'game.setPlayerRole'
+export const setPlayerRole = (role) => ({
+    type: SET_PLAYER_ROLE,
+    payload: role
+})
+
+export const UPDATE_STATS = 'game.updateStats'
+export const updateStats = (stats) => ({
+    type: UPDATE_STATS,
+    payload: stats
 })

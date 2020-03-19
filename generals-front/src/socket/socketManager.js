@@ -2,7 +2,7 @@ import socketIO from 'socket.io-client'
 import config from '../config'
 import store from '../storage/store'
 import { setUser } from '../storage/user/user.action'
-import { setPlayers, setBoard, removeCommands, setBattleMode } from '../storage/game/game.action'
+import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
 
@@ -12,7 +12,14 @@ const io = socketIO(config.address)
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
-io.on('startBattle', () => store.dispatch(setBattleMode(true)))
+io.on('startBattle', () => store.dispatch(setPlayerRole('fighter')))
+io.on('updateStats', (stats) => store.dispatch(updateStats(stats)))
+io.on('loser', () => store.dispatch(setPlayerRole('spectator')))
+io.on('winner', winner => {
+    store.dispatch(setPlayerRole('spectator'))
+    window.alert(`${winner.userName} won!`)
+})
+
 io.on('updateBoard', board => {
     const socketId = store.getState().user.socketId
     board
@@ -28,7 +35,6 @@ io.on('updateBoard', board => {
     store.dispatch(setBoard(board))
 })
 io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds)))
-io.on('winner', winner => window.alert(`${winner.userName} won!`))
 
 // CHAT
 export const sendMessage = (message) => io.emit('sendMessage', message)
