@@ -60,8 +60,9 @@ export default () => {
                     board.map((row, index) => (
                         <div key={index} className='board-row '>
                             {
-                                row.map(v => (
+                                row.map((v, index) => (
                                     <Field
+                                        key={index}
                                         seeAll={playerRole === 'spectator' || window.debug === true}
                                         commands={commandsForFields[`${v.x}-${v.y}`] || []}
                                         field={v}
