@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { userSelector } from '../storage/user/user.selector'
-import { playersSelector, userColorsSelector, usersStatsSelector, tourCounterSelector } from '../storage/game/game.selector'
+import { playersSelector, userColorsSelector, usersStatsSelector, tourCounterSelector, playerRoleSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
 import styles from './GameInfo.module.scss'
 import { Button } from 'antd'
@@ -12,7 +11,7 @@ export default () => {
     const userColors = useSelector(userColorsSelector)
     const userStats = useSelector(usersStatsSelector)
     const tour = useSelector(tourCounterSelector)
-    const playerRole = useSelector(playersSelector)
+    const playerRole = useSelector(playerRoleSelector)
     const dispatch = useDispatch()
 
     const handleClickLobby = () => dispatch(setPlayerRole('lobby'))
@@ -49,7 +48,7 @@ export default () => {
                 }
             </div>
             <div>
-                Tour: {tour}
+                Tour: {tour} 
             </div>
             <div>
                 {
