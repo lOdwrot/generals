@@ -6,3 +6,4 @@ export const userColorsSelector = state => state.game.userColors
 export const playerRoleSelector = state => state.game.playerRole
 export const usersStatsSelector = state => state.game.usersStats
 export const tourCounterSelector = state => state.game.tourCounter
+export const moveTypeSelector = state => state.game.moveType

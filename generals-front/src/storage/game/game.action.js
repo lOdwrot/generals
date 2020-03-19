@@ -39,3 +39,9 @@ export const updateStats = (stats) => ({
     type: UPDATE_STATS,
     payload: stats
 })
+
+export const SET_MOVE_TYPE = 'game.setMoveType'
+export const setMoveType = (type) => ({
+    type: SET_MOVE_TYPE,
+    payload: type
+})

@@ -1,15 +1,17 @@
 import store from '../storage/store'
 import { setActiveField, setCommands } from '../storage/game/game.action'
-import { activeFieldSelector, commandsSelector, boardSelector } from '../storage/game/game.selector'
+import { activeFieldSelector, commandsSelector, boardSelector, moveTypeSelector } from '../storage/game/game.selector'
 import uniqid from 'uniqid'
 import { addCommand } from '../socket/socketManager'
 
 const CMD_MOVE_ALL = 'MOVE_ALL'
+const CMD_MOVE_HALF = 'MOVE_HALF'
 
 export const move = (key) => {
     const commands = commandsSelector(store.getState())
     const board = boardSelector(store.getState())
     const activeField = activeFieldSelector(store.getState())
+    const moveType = moveTypeSelector(store.getState())
     const prevX = activeField.x, prevY = activeField.y
     
     const {x, y, direction} = translateDirectionKeyToMove(prevX, prevY, key)
@@ -28,7 +30,9 @@ export const move = (key) => {
         from: {x: prevX, y: prevY},
         direction,
         id: uniqid(),
-        type: CMD_MOVE_ALL
+        type: moveType === 'all' 
+            ? CMD_MOVE_ALL
+            : CMD_MOVE_HALF
     }
 
     addCommand(nextCommand)

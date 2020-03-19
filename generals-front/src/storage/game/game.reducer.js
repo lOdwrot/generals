@@ -6,9 +6,10 @@ const INITIAL_STATE = {
     activeField: {x: -1, y: -1},
     commands: [],
     userColors: {},
-    playerRole: 'lobby',
     usersStats: {},
     tourCounter: 0,
+    playerRole: 'lobby',
+    moveType: 'all',
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -22,7 +23,7 @@ export default (state = INITIAL_STATE, action) => {
         case actions.SET_BOARD:
             return {...state, board: action.payload}
         case actions.SET_ACTIVE_FIELD:
-            return {...state, activeField: action.payload}
+            return {...state, activeField: action.payload, moveType: 'all'}
         case actions.SET_COMMANDS:
             return {...state, commands: action.payload}
         case actions.REMOVE_COMMANDS:
@@ -31,6 +32,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, playerRole: action.payload}
         case actions.UPDATE_STATS:
             return {...state, ...action.payload}
+        case actions.SET_MOVE_TYPE:
+            return {...state, moveType: action.payload}
         default:
             return state
     }

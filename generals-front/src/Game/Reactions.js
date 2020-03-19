@@ -1,10 +1,11 @@
 import store from '../storage/store'
-import { setActiveField, removeCommands } from '../storage/game/game.action'
+import { setActiveField, removeCommands, setMoveType } from '../storage/game/game.action'
 import { move } from './Moves'
 import { commandsSelector } from '../storage/game/game.selector'
 import { eraseCommands } from '../socket/socketManager'
 
 export const clickOnActiveField = (x, y) => store.dispatch(setActiveField({x, y}))
+export const setHalfUnitsMove = () => store.dispatch(setMoveType('half'))
 
 const MOVE_KEYS = ['w', 's', 'a', 'd']
 export const keyboardListener = ({key}) => {

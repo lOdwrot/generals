@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { userSelector } from '../storage/user/user.selector'
-import { activeFieldSelector, userColorsSelector } from '../storage/game/game.selector'
+import { activeFieldSelector, userColorsSelector, moveTypeSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
-import { clickOnActiveField } from './Reactions'
+import { clickOnActiveField, setHalfUnitsMove } from './Reactions'
 import {isEqual} from 'lodash'
 
 export default React.memo(({
@@ -14,15 +14,25 @@ export default React.memo(({
     const user = useSelector(userSelector)
     const userColors = useSelector(userColorsSelector)
     const activeField = useSelector(activeFieldSelector)
+    const moveType = useSelector(moveTypeSelector)
     const { type, owner, units, x, y, isVisible } = field
     const isOwner = user.socketId === owner
+    const isActiveField = activeField.x === x && activeField.y === y
 
-    const handleClickField = () => isOwner && clickOnActiveField(x, y)
+    const handleClickField = () => {
+        if (!isOwner) return
+        console.log(moveType)
+        if (isActiveField && moveType === 'all') return setHalfUnitsMove()
+        clickOnActiveField(x, y)
+    }
+
     const getBackgroundColor = () => {
         if (!seeAll && !isVisible === true) return '#202020'
         if(owner === 'n') return 'grey'
         return userColors[owner]
     }
+
+    const getFieldUnits = () => (seeAll || !!isVisible) && (units != null) && units
     
     // not-visible
     return (
@@ -34,10 +44,14 @@ export default React.memo(({
             }}
             className={classnames('board-tile', {
                 'clicable': isOwner,
-                'selected-field': (activeField.x === x && activeField.y === y),
+                'selected-field': isActiveField,
             })}
         >
-            {(seeAll || !!isVisible) && (units != null) && units}
+            {
+                (isActiveField && moveType === 'half')
+                    ? '50%'
+                    :  getFieldUnits()
+            }
             {
                 commands.map(v => (
                     <div className={getClassForArrow(v)}>

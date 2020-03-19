@@ -39,6 +39,7 @@ export class Game {
         this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
         this.UNITS_INSTANTIATION_INTERVAL = fieldProduction
         this.usersStats = null
+        this.isNonAggresionPactValid = true
         // TO FIX
         // coordinates missmatch
         this.board = generateMap({
@@ -78,7 +79,7 @@ export class Game {
         
         if (this.tourCounter % MOVE_TO_RESP_RATIO === 0) this.instantiateUnits()
         
-        
+        if (this.tourCounter === this.nonAggression) this.isNonAggresionPactValid = false
         this.tourCounter++
         
         const nextUserStats = this.calculateUserStats()
@@ -124,33 +125,42 @@ export class Game {
     executeCommand(command, socketId) {
         switch (command.type) {
             case 'MOVE_ALL': {
-                const {from, direction} = command
-                const to = getNextCoordinates(from, direction)
-
-                const fromField = this.getBoardField(from)
-                const toField = this.getBoardField(to)
-                const movedUnits = fromField.units - 1
-                fromField.units = fromField.units - movedUnits
-
-                if(toField.owner === fromField.owner) {
-                    toField.units += movedUnits
-                    return
-                }
-
-                if (toField.units < movedUnits) {
-                    if (toField.type == 'capitol') {
-                        this.conquerPlayer(fromField.owner, toField.owner, toField)
-                    }
-                    toField.owner = socketId
-                }
-                
-                toField.units = Math.abs(toField.units - movedUnits)
-                
+                this.move(command, socketId, 'all')
+                break;
+            }
+            case 'MOVE_HALF': {
+                this.move(command, socketId, 'half')
                 break;
             }
             default:
                 break;
         }
+    }
+
+    move({from, direction}, socketId, type) {
+        const to = getNextCoordinates(from, direction)
+
+        const fromField = this.getBoardField(from)
+        const toField = this.getBoardField(to)
+        const movedUnits = (type == 'all')
+            ? fromField.units - 1
+            : Math.floor(fromField.units / 2)
+
+        fromField.units = fromField.units - movedUnits
+
+        if(toField.owner === fromField.owner) {
+            toField.units += movedUnits
+            return
+        }
+
+        if (toField.units < movedUnits) {
+            if (toField.type == 'capitol') {
+                this.conquerPlayer(fromField.owner, toField.owner, toField)
+            }
+            toField.owner = socketId
+        }
+        
+        toField.units = Math.abs(toField.units - movedUnits)
     }
 
     instantiateUnits() {
@@ -177,17 +187,23 @@ export class Game {
     isCommandExecutable(command, socketId) {
         if (command.type === 'MOVE_ALL') {
             const {from, direction} = command
-                const to = getNextCoordinates(from, direction)
+            const to = getNextCoordinates(from, direction)
 
-                const fromField = this.getBoardField(from)
-                const toField = this.getBoardField(to)
+            const fromField = this.getBoardField(from)
+            const toField = this.getBoardField(to)
 
-                if(
-                    !fromField || !toField ||
-                    fromField.owner != socketId ||
-                    fromField.units < 2 ||
-                    toField.type === 'mountain'
-                ) return false
+            if(
+                this.isNonAggresionPactValid && 
+                toField.owner !== 'n' &&
+                toField.owner !== fromField.owner
+            ) return false
+
+            if(
+                !fromField || !toField ||
+                fromField.owner != socketId ||
+                fromField.units < 2 ||
+                toField.type === 'mountain'
+            ) return false
         }
 
         return true
