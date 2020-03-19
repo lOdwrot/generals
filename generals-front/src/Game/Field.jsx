@@ -4,8 +4,9 @@ import { userSelector } from '../storage/user/user.selector'
 import { activeFieldSelector, userColorsSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
 import { clickOnActiveField } from './Reactions'
+import {isEqual} from 'lodash'
 
-export default ({
+export default React.memo(({
     field,
     commands,
     seeAll
@@ -46,7 +47,14 @@ export default ({
             }
         </div>
     )
-}
+}, (prevProps, nextProps) => {
+    if(
+        isEqual(prevProps.commands, nextProps.commands) &&
+        isEqual(prevProps.field, nextProps.field) &&
+        isEqual(prevProps.seeAll, nextProps.seeAll)
+    ) return true
+    return false
+})
 
 function getImageLink(type, isVisible) {
     let imagePath = '';

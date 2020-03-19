@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import socketIO from 'socket.io'
 import uniqid from 'uniqid'
 import { Game } from './gameUtils/Game'
+import { MOVE_TO_RESP_RATIO } from './config'
 
 const PORT = process.env.PORT || 5500
 
@@ -105,7 +106,7 @@ io.on('connection', (socket) => {
             //     io.to(user.roomId).emit('winner', winner)
             //     delete room.game
             // }
-        }, game.turnDuration)
+        }, (game.turnDuration / MOVE_TO_RESP_RATIO))
     })
 
     socket.on('addCommand', command => {

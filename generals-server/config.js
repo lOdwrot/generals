@@ -1,0 +1,1 @@
+export const MOVE_TO_RESP_RATIO = 2

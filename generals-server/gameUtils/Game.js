@@ -1,4 +1,5 @@
 import { generateMap } from "./mapUtils"
+import { MOVE_TO_RESP_RATIO } from "../config"
 
 
 const getNextCoordinates = (from, direction) => {
@@ -60,7 +61,6 @@ export class Game {
     tic() {
         const removedCommands = {}
 
-        this.instantiateUnits()
         Object.keys(this.moves).forEach(socketId => {
             let moves = this.moves[socketId]
             let executableIndex = moves.findIndex(v => this.isCommandExecutable(v, socketId))
@@ -75,8 +75,12 @@ export class Game {
                 this.moves[socketId] = []
             }
         })
+        
+        if (this.tourCounter % MOVE_TO_RESP_RATIO === 0) this.instantiateUnits()
+        
+        
         this.tourCounter++
-
+        
         const nextUserStats = this.calculateUserStats()
         let newLoosers = this.usersStats 
                             ? Object.keys(nextUserStats)
