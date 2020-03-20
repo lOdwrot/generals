@@ -175,7 +175,7 @@ export class Game {
     }
 
     instantiateUnits() {
-        const ocupiedFields = this.board.flat().filter(v => v.owner != 'n')
+        const ocupiedFields = flatten(this.board).filter(v => v.owner != 'n')
         if (this.tourCounter % this.UNITS_INSTANTIATION_INTERVAL === 0){
             ocupiedFields.forEach(v => v.units++)
         } else if(this.tourCounter % this.CASTLE_INSTANTIATION_INTERVAL === 0) {
