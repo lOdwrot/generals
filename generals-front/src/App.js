@@ -8,8 +8,9 @@ import Settings from './Settings/Settings';
 import { useSelector } from 'react-redux';
 import GameInfo from './GameInfo/GameInfo';
 import { playerRoleSelector } from './storage/game/game.selector';
-import { Button } from 'antd';
 import { playOpeningMusic } from './audioPlayer/audioPlayer';
+import AudioControl from './AudioControl/AudioControl';
+import './App.css'
 
 function App() {
   const playerRole = useSelector(playerRoleSelector)
@@ -19,6 +20,7 @@ function App() {
 
   return (
     <div>
+      <AudioControl/>
       <GameInfo/>
       <LiveChat/>
       {

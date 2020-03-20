@@ -4,8 +4,9 @@
     z-index: 999;
     position: fixed;
     right: 0;
-    border: solid 1px gray;
-    border-radius: 5px;
+    border-bottom: solid 1px gray;
+    border-left: solid 1px gray;
+    border-bottom-left-radius: 5px;
     text-align: center;
 }
 

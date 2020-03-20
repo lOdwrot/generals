@@ -2,7 +2,7 @@ import socketIO from 'socket.io-client'
 import config from '../config'
 import store from '../storage/store'
 import { setUser } from '../storage/user/user.action'
-import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole } from '../storage/game/game.action'
+import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
 import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic } from '../audioPlayer/audioPlayer'
@@ -14,6 +14,8 @@ export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
 io.on('startBattle', () => {
+    store.dispatch(setActiveField({x: -1, y: -1}))
+    store.dispatch(setCommands([]))
     playBattleStartMusic()
     setTimeout(() => playPeacfullBackgoundMusic(), 6000)
     store.dispatch(setPlayerRole('fighter'))

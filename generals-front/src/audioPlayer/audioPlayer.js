@@ -29,20 +29,30 @@ export const playWinMusic = () => playMusic(WON_MUSIC)
 
 var audio
 var dialogsAudio
+var volume = 1
 
 const playMusic = (audioPath) => {
     if(audio) audio.pause()
     audio = new Audio(audioPath)
+    audio.volume = volume
     audio.play()
 }
 
 const playDialog = (audioPath) => {
     if(dialogsAudio) dialogsAudio.pause()
     dialogsAudio = new Audio(audioPath)
+    dialogsAudio.volume = volume
     dialogsAudio.play()
 }
 
 export const stopSounds = () => {
     if(audio) audio.pause()
     if(dialogsAudio) dialogsAudio.pause()
+}
+
+export const setVolume = (level) => {
+    volume = level
+
+    if(audio) audio.volume = volume
+    if(dialogsAudio) dialogsAudio.volume = volume
 }

@@ -81,7 +81,7 @@ export const generateMap = ({
     const capitolsCoordinates = []
     const MIN_CAPITOL_DISTANCE = (width + height) / (3 * players.length) 
     while(true) {
-        let [x, y] = generateCoordinates(i)
+        let [x, y] = generateCoordinates(random(0, 3))
         if (
             capitolsCoordinates.find(([posX, posY]) => (Math.abs(x - posX) + Math.abs(y - posY)) < MIN_CAPITOL_DISTANCE)
         ) {
@@ -122,7 +122,7 @@ export const generateMap = ({
         }
         return false
     }
-    
+
     return checkBoardIsValid(capitolsCoordinates[0])
         ? result
         : generateMap({

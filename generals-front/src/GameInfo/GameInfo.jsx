@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import styles from './GameInfo.module.scss'
 import { Button } from 'antd'
 import { setPlayerRole } from '../storage/game/game.action'
+import { gameSettingsSelector } from '../storage/settings/settings.selector'
 
 export default () => {
     const players = useSelector(playersSelector)
@@ -12,6 +13,7 @@ export default () => {
     const userStats = useSelector(usersStatsSelector)
     const tour = useSelector(tourCounterSelector)
     const playerRole = useSelector(playerRoleSelector)
+    const {nonAggression} = useSelector(gameSettingsSelector)
     const dispatch = useDispatch()
 
     const handleClickLobby = () => dispatch(setPlayerRole('lobby'))
@@ -48,7 +50,7 @@ export default () => {
                 }
             </div>
             <div>
-                Tour: {tour} 
+                Tour: {tour} / {nonAggression}
             </div>
             <div>
                 {

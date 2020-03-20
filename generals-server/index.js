@@ -5,6 +5,7 @@ import socketIO from 'socket.io'
 import uniqid from 'uniqid'
 import { Game } from './gameUtils/Game'
 import { MOVE_TO_RESP_RATIO } from './config'
+import path from 'path'
 
 const PORT = process.env.PORT || 5500
 
@@ -15,8 +16,13 @@ const server = http
                 .createServer(app)
                 .listen(PORT)
 
-app.get('/', (req, res) => {
-    res.send('<h1>Welcome in Generals</h1>');
+// app.get('/', (req, res) => {
+//     res.send('<h1>Welcome in Generals</h1>');
+// })
+
+app.use(express.static(path.join(__dirname, 'clientBuild')));
+app.get('*', (req, res) => {
+    res.sendfile(path.join(__dirname, 'clientBuild/index.html'));
 })
 
 const io = socketIO(server)
@@ -116,12 +122,14 @@ io.on('connection', (socket) => {
     socket.on('addCommand', command => {
         const user = users[socket.id]
         const room = rooms[user.roomId]
+        if(!room.game) return
         room.game.addCommand(user.socketId, command)
     })
 
     socket.on('eraseCommands', commandIds => {
         const user = users[socket.id]
         const room = rooms[user.roomId]
+        if(!room.game) return
         room.game.eraseCommands(user.socketId, commandIds)
     })
 

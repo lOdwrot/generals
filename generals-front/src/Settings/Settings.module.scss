@@ -11,8 +11,7 @@
     border: solid 1px gray;
     border-radius: 5px;    
     margin-top: 25px;
-    padding-left: 16px;
-    padding-right: 16px;
+    background: slategray;
 }
 
 .settings-list {
@@ -20,4 +19,7 @@
     overflow-x: hidden;
     max-height: 600px;
     height: 50vh;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 5px;
 }
