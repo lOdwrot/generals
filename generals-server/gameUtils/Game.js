@@ -1,6 +1,6 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
-
+import {flatten} from 'lodash'
 
 const getNextCoordinates = (from, direction) => {
     let x = from.x
@@ -119,8 +119,7 @@ export class Game {
             }
         }), {})
 
-        this.board
-            .flat()
+        flatten(this.board)
             .forEach(({owner, units, type}) => {
                 if (owner == 'n') return
                 const stats = userStats[owner]
@@ -188,8 +187,7 @@ export class Game {
 
     conquerPlayer(agressorId, victimId, capitolField) {
         this.loosers.push(victimId)
-        this.board
-            .flat()
+        flatten(this.board)
             .filter(v => v.owner === victimId)
             .forEach(v => v.owner = agressorId)
 

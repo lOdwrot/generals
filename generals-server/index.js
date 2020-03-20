@@ -75,19 +75,24 @@ io.on('connection', (socket) => {
 
     socket.on('sendMessage', message => {
         const user = users[socket.id]
+        if(!user) return
         if (!user) return console.log('No user registered')
         io.to(user.roomId).emit('chat', `${user.userName}: ${message}`)
     })
 
     socket.on('setRoomSettings', settings => {
         const user = users[socket.id]
+        if(!user) return
         const room = rooms[user.roomId]
+        if(!room) return
         applyRoomSettings(settings, room, user.socketId)
     })
 
     socket.on('start', settings => {
         const user = users[socket.id]
+        if(!user) return
         const room = rooms[user.roomId]
+        if(!room) return
         applyRoomSettings(settings, room, user.socketId)
         
         const game = new Game(room.users, settings)
@@ -121,6 +126,7 @@ io.on('connection', (socket) => {
 
     socket.on('addCommand', command => {
         const user = users[socket.id]
+        if(!user) return
         const room = rooms[user.roomId]
         if(!room.game) return
         room.game.addCommand(user.socketId, command)
@@ -128,7 +134,9 @@ io.on('connection', (socket) => {
 
     socket.on('eraseCommands', commandIds => {
         const user = users[socket.id]
+        if(!user) return
         const room = rooms[user.roomId]
+        if(!room) return
         if(!room.game) return
         room.game.eraseCommands(user.socketId, commandIds)
     })
@@ -150,6 +158,8 @@ const handleDisconnect = (socketId) => {
 
     const room = rooms[user.roomId]
     if(!room) return
+    clearInterval(room.game && room.game.intervalId)
+    
     room.users = room.users.filter(v => v.socketId !== socketId)
 
     if(room.users.length > 0) {
@@ -157,7 +167,6 @@ const handleDisconnect = (socketId) => {
         return
     }
 
-    clearInterval(room.game && room.game.intervalId)
     delete rooms[user.roomId]
 }
 
