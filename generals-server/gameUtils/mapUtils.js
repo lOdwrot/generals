@@ -92,7 +92,7 @@ export const generateMap = ({
             ...result[x][y],
             type: 'capitol',
             owner: players[i],
-            units: 99
+            units: 1
         })
 
         capitolsCoordinates.push([x, y])
