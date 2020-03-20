@@ -1,5 +1,5 @@
 const devConfig = {
-    address: 'http://localhost:5500'
+    address: '/'
 }
 
 const config = devConfig

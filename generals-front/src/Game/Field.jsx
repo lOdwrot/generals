@@ -29,7 +29,7 @@ export default React.memo(({
     const getBackgroundColor = () => {
         if (!seeAll && !isVisible === true) return '#202020'
         if(owner === 'n') return 'grey'
-        return userColors[owner]
+        return userColors[owner] || 'grey'
     }
 
     const getFieldUnits = () => (seeAll || !!isVisible) && (units != null) && units

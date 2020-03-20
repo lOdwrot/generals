@@ -26,7 +26,7 @@ export default () => {
                 ? -0.1
                 : 0.1
             )
-        if (nextScale > 2 || nextScale < 0.5) return
+        if (nextScale > 2 || nextScale < 0.3) return
 
         board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
     }

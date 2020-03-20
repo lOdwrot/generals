@@ -10,26 +10,26 @@ export const generateMap = ({
     const QUARTERS = [
         {
             xFrom: 0, 
-            xTo: width / 2, 
+            xTo: Math.floor(width / 2), 
             yFrom: 0, 
-            yTo: height / 2
+            yTo: Math.floor(height / 2)
         },
         {
-            xFrom: width / 2, 
+            xFrom: Math.floor(width / 2), 
             xTo: width - 1, 
             yFrom: 0, 
-            yTo: height / 2
+            yTo: Math.floor(height / 2)
         },
         {
             xFrom: 0, 
-            xTo: width / 2, 
-            yFrom: height / 2, 
+            xTo: Math.floor(width / 2), 
+            yFrom: Math.floor(height / 2), 
             yTo: height - 1
         },
         {
-            xFrom: width / 2, 
+            xFrom: Math.floor(width / 2), 
             xTo: width - 1, 
-            yFrom: height / 2, 
+            yFrom: Math.floor(height / 2), 
             yTo: height - 1
         },
     ] 

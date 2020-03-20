@@ -6,6 +6,7 @@ body {
     user-select: none;
     position: absolute;
     transition: transform 0.1s;
+    background: white;
 }
 
 .board-row {
@@ -22,6 +23,7 @@ body {
     border: solid 1px black;
     font-weight: 400;
     color: white;
+    text-shadow: 1px 1px black;
     background-repeat: no-repeat;
     background-origin: content-box;
     background-size: contain;
@@ -47,8 +49,8 @@ body {
 }
 
 .selected-field {
-    opacity: 0.7s;
-    background-color: rgb(241, 234, 234) !important;
+    opacity: 0.5;
+    border: solid 2px white;
 }
 
 .arrow-container {
