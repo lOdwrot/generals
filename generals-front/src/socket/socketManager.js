@@ -6,6 +6,8 @@ import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setAc
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
 import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic } from '../audioPlayer/audioPlayer'
+import { eraseHistory, setUserColorsInHistory } from '../storage/history/history.action'
+import { playersSelector } from '../storage/game/game.selector'
 
 const io = socketIO(config.address)
 
@@ -16,9 +18,16 @@ export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds
 io.on('startBattle', () => {
     store.dispatch(setActiveField({x: -1, y: -1}))
     store.dispatch(setCommands([]))
+    
     playBattleStartMusic()
     setTimeout(() => playPeacfullBackgoundMusic(), 6000)
     store.dispatch(setPlayerRole('fighter'))
+    
+    // HISTORY
+    const userColors = playersSelector(store.getState())
+                        .reduce((acc, v) => ({...acc, [v.socketId]: v.color}), {})
+    store.dispatch(eraseHistory())
+    store.dispatch(setUserColorsInHistory(userColors))
 })
 io.on('updateStats', (stats) => store.dispatch(updateStats(stats)))
 io.on('loser', () => {

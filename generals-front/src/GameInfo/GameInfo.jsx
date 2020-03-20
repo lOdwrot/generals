@@ -6,6 +6,7 @@ import styles from './GameInfo.module.scss'
 import { Button } from 'antd'
 import { setPlayerRole } from '../storage/game/game.action'
 import { gameSettingsSelector } from '../storage/settings/settings.selector'
+import { playPeacfullBackgoundMusic } from '../audioPlayer/audioPlayer'
 
 export default () => {
     const players = useSelector(playersSelector)
@@ -17,6 +18,10 @@ export default () => {
     const dispatch = useDispatch()
 
     const handleClickLobby = () => dispatch(setPlayerRole('lobby'))
+    const handleClickHistory = () => {
+        playPeacfullBackgoundMusic()
+        dispatch(setPlayerRole('historySpectator'))
+    }
 
     return (
         <div className={styles['info-panel']}>
@@ -54,7 +59,17 @@ export default () => {
             </div>
             <div>
                 {
-                    playerRole === 'spectator' &&
+                    playerRole === 'spectator'  &&
+                    <Button
+                        type="primary"
+                        onClick={handleClickHistory}
+                        style={{width: '100%'}}
+                    >
+                        Battle History
+                    </Button>
+                }
+                {
+                    (playerRole === 'spectator' || playerRole === 'historySpectator') &&
                     <Button
                         onClick={handleClickLobby}
                         type={"danger"}

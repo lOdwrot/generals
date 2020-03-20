@@ -88,7 +88,7 @@ export class Game {
         let endOfPeace = false
         if (this.tourCounter === this.nonAggression) {
             this.isNonAggresionPactValid = false
-            if(this.nonAggression >= 120) {
+            if(this.nonAggression >= 50) {
                 endOfPeace = true
             }
         }

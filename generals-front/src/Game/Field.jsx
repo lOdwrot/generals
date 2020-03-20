@@ -9,10 +9,10 @@ import {isEqual} from 'lodash'
 export default React.memo(({
     field,
     commands,
-    seeAll
+    seeAll,
+    userColors
 }) => {
     const user = useSelector(userSelector)
-    const userColors = useSelector(userColorsSelector)
     const activeField = useSelector(activeFieldSelector)
     const moveType = useSelector(moveTypeSelector)
     const { type, owner, units, x, y, isVisible } = field
@@ -20,7 +20,7 @@ export default React.memo(({
     const isActiveField = activeField.x === x && activeField.y === y
 
     const handleClickField = () => {
-        if (!isOwner) return
+        if (!isOwner || seeAll) return
         console.log(moveType)
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)

@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { boardSelector, commandsSelector, playerRoleSelector } from '../storage/game/game.selector'
+import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector } from '../storage/game/game.selector'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
 
-export default () => {
-    const board = useSelector(boardSelector)
+export default ({
+    overridedBoard,
+    overridedUserColors
+}) => {
+    const board = overridedBoard || useSelector(boardSelector)
+    const userColors = overridedUserColors || useSelector(userColorsSelector)
     const commands = useSelector(commandsSelector)
     const playerRole = useSelector(playerRoleSelector)
+
+    const isAllVisible = playerRole === 'spectator' || playerRole === 'historySpectator' || window.debug === true
     
     const mouseMoveListener = ({movementX, movementY, buttons}) => {
         if(buttons !== 1) return
@@ -32,11 +38,15 @@ export default () => {
     }
 
     useEffect(() => {
-        window.addEventListener('keypress', keyboardListener)
+        if(playerRole !== 'historySpectator') {
+            window.addEventListener('keypress', keyboardListener)
+        }
         window.addEventListener('mousemove', mouseMoveListener)
         window.addEventListener('mousewheel', mouseWheelListener)
         return () => {
-            window.removeEventListener('keypress', keyboardListener)
+            if(playerRole !== 'historySpectator') {
+                window.removeEventListener('keypress', keyboardListener)
+            }
             window.removeEventListener('mousemove', mouseMoveListener)
             window.removeEventListener('mousewheel', mouseWheelListener)
         }
@@ -63,7 +73,8 @@ export default () => {
                                 row.map((v, index) => (
                                     <Field
                                         key={index}
-                                        seeAll={playerRole === 'spectator' || window.debug === true}
+                                        userColors={userColors}
+                                        seeAll={isAllVisible}
                                         commands={commandsForFields[`${v.x}-${v.y}`] || []}
                                         field={v}
                                     />

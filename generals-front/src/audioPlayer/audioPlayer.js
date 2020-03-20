@@ -16,7 +16,7 @@ const LOST_MUSIC = `${process.env.PUBLIC_URL}/lost.mp3`
 const WON_MUSIC = `${process.env.PUBLIC_URL}/won.mp3`
 
 
-export const playOpeningMusic = () => playMusic(OPENING_MUSIC)
+export const playOpeningMusic = () => setTimeout(() => playMusic(OPENING_MUSIC), 1000)
 export const playBattleStartMusic = () => playMusic(BATTLE_START_MUSIC)
 export const playCaptureCapitolSound = () => playDialog(CAPTURE_CAPITOL_SOUND)
 

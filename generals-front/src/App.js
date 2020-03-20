@@ -11,6 +11,7 @@ import { playerRoleSelector } from './storage/game/game.selector';
 import { playOpeningMusic } from './audioPlayer/audioPlayer';
 import AudioControl from './AudioControl/AudioControl';
 import './App.css'
+import BattleHistory from './BattleHistory/BattleHistory';
 
 function App() {
   const playerRole = useSelector(playerRoleSelector)
@@ -33,6 +34,10 @@ function App() {
       {
         (playerRole === 'fighter' || playerRole === 'spectator') &&
         <Board/>
+      }
+      {
+        playerRole === 'historySpectator' &&
+        <BattleHistory/>
       }
     </div>
   );

@@ -7,7 +7,7 @@ const INITIAL_STATE = ({
         mapWidth: 20,
         mapHeight: 20,
         gameMode: 'Conquest',
-        nonAggression: 20,
+        nonAggression: 50,
         castlesDensity: 0.5,
         mountainDensity: 0.5,
         castleProduction: 1,
