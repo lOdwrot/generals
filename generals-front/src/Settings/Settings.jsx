@@ -74,7 +74,7 @@ export default () => {
                             <Slider
                                 disabled={!isHost}
                                 min={15}
-                                max={50}
+                                max={55}
                                 value={mapWidth}
                                 onChange={(v) => handleChangeSetting('mapWidth', v)}
                             />
@@ -83,7 +83,7 @@ export default () => {
                             <Slider
                                 disabled={!isHost}
                                 min={15}
-                                max={50}
+                                max={55}
                                 value={mapHeight}
                                 onChange={(v) => handleChangeSetting('mapHeight', v)}
                             />
@@ -159,7 +159,7 @@ export default () => {
                                 onChange={(v) => handleChangeSetting('fieldProduction', v)}
                             />
                         </FormItem>
-                        <FormItem help={`Resp Turn Duration: ${turnDuration} ms`}>
+                        <FormItem help={`Turn Duration: ${turnDuration} ms`}>
                             <Slider
                                 disabled={!isHost}
                                 min={250}

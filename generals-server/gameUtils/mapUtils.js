@@ -60,11 +60,14 @@ export const generateMap = ({
     // generate castles
     for (let i = 0; i < castles; i++) {
         const [x, y] = generateCoordinates(i)
-        if(result[x][y].type != 'plain') continue
+        if(result[x][y].type != 'plain') {
+            i--
+            continue
+        }
         result[x][y] = ({
             ...result[x][y],
             type: 'castle',
-            units: Math.floor(Math.random() * 15) + 30
+            units: random(5,18) + 30
         })
     }
 
@@ -86,7 +89,8 @@ export const generateMap = ({
         {quarter: 3, occupancy: 0},
     ]
 
-    const MIN_CAPITOL_DISTANCE = (width + height) / (2 * players.length)
+    const MIN_CAPITOL_DISTANCE = (Math.sqrt(width*height/players.length) / 2) + 1 
+
     while(true) {
         const maxInQuarters = quartersCapitols
                                 .map(v => v.occupancy)
@@ -99,7 +103,7 @@ export const generateMap = ({
 
         let [x, y] = generateCoordinates(selectedQuarter.quarter)
         if (
-            capitolsCoordinates.find(([posX, posY]) => (Math.abs(x - posX) + Math.abs(y - posY)) < MIN_CAPITOL_DISTANCE)
+            capitolsCoordinates.find(([posX, posY]) => (Math.pow(x - posX, 2) + Math.pow(y - posY, 2)) <= Math.pow(MIN_CAPITOL_DISTANCE, 2))
         ) {
             continue
         }
@@ -123,10 +127,10 @@ export const generateMap = ({
         for (let field of visitedTiles) {
             const {x, y} = field
             let proposalTiles = [
-                result[x+1] && result[x+1][y],
-                result[x-1] && result[x-1][y],
-                result[x][y+1],
-                result[x][y-1],
+                result[y+1] && result[y+1][x],
+                result[y-1] && result[y-1][x],
+                result[y][x+1],
+                result[y][x-1],
             ]
 
             let spreadToFields = proposalTiles.filter(v => v && v.type != 'mountain' && !visitedTiles.includes(v))

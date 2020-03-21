@@ -56,7 +56,7 @@ export default () => {
         <>
             <div className={styles['speed-slider']}>
                 <Slider
-                    max={50}
+                    max={100}
                     min={1}
                     step={1}
                     value={speed}
