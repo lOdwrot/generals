@@ -29,7 +29,7 @@ export const playWinMusic = () => playMusic(WON_MUSIC)
 
 var audio
 var dialogsAudio
-var volume = 1
+var volume = 0.5
 
 const playMusic = (audioPath) => {
     if(audio) audio.pause()

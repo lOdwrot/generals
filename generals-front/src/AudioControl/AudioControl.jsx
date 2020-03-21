@@ -5,7 +5,7 @@ import { SoundOutlined } from '@ant-design/icons'
 import { setVolume } from '../audioPlayer/audioPlayer'
 
 export default () => {
-    const [vloumeLevel, setVloumeLevel] = useState(100)
+    const [vloumeLevel, setVloumeLevel] = useState(50)
 
     const handleSetVolumeLevel = (level) => {
         setVloumeLevel(level)

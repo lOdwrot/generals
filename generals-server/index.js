@@ -158,15 +158,15 @@ const handleDisconnect = (socketId) => {
 
     const room = rooms[user.roomId]
     if(!room) return
-    clearInterval(room.game && room.game.intervalId)
-    
     room.users = room.users.filter(v => v.socketId !== socketId)
 
+    
     if(room.users.length > 0) {
         io.to(user.roomId).emit('refreshPlayersInRoom', room.users)
         return
     }
 
+    clearInterval(room.game && room.game.intervalId)
     delete rooms[user.roomId]
 }
 

@@ -107,7 +107,7 @@ export default () => {
                         <FormItem help={`Duration Of Non-Aggression Pact: ${nonAggression}`}>
                             <Slider
                                 disabled={!isHost}
-                                min={0}
+                                min={10}
                                 max={300}
                                 step={10}
                                 value={nonAggression}

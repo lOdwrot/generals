@@ -21,7 +21,6 @@ export default React.memo(({
 
     const handleClickField = () => {
         if (!isOwner || seeAll) return
-        console.log(moveType)
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)
     }

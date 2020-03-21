@@ -1,4 +1,4 @@
-import {random} from 'lodash'
+import {random, sample} from 'lodash'
 
 export const generateMap = ({
     width = 16, 
@@ -79,9 +79,25 @@ export const generateMap = ({
 
     let i = 0
     const capitolsCoordinates = []
-    const MIN_CAPITOL_DISTANCE = (width + height) / (3 * players.length) 
+    const quartersCapitols = [
+        {quarter: 0, occupancy: 0},
+        {quarter: 1, occupancy: 0},
+        {quarter: 2, occupancy: 0},
+        {quarter: 3, occupancy: 0},
+    ]
+
+    const MIN_CAPITOL_DISTANCE = (width + height) / (2 * players.length)
     while(true) {
-        let [x, y] = generateCoordinates(random(0, 3))
+        const maxInQuarters = quartersCapitols
+                                .map(v => v.occupancy)
+                                .reduce((acc, v) => acc > v ? acc : v, 0)
+
+        let pickFrom = quartersCapitols.filter(v => v.occupancy < maxInQuarters)
+        if(pickFrom.length == 0) pickFrom = quartersCapitols
+        let selectedQuarter = sample(pickFrom)
+        selectedQuarter.occupancy++
+
+        let [x, y] = generateCoordinates(selectedQuarter.quarter)
         if (
             capitolsCoordinates.find(([posX, posY]) => (Math.abs(x - posX) + Math.abs(y - posY)) < MIN_CAPITOL_DISTANCE)
         ) {
