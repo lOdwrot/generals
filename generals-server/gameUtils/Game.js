@@ -34,7 +34,7 @@ export class Game {
         this.unitMovesCounter = 0
         this.intervalId = null
         this.loosers = []
-        this.players = {...players}
+        this.players = [...players]
         this.nonAggression = nonAggression
         this.turnDuration = turnDuration
         this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
