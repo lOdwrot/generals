@@ -28,7 +28,7 @@ app.get('*', (req, res) => {
 const io = socketIO(server)
 const rooms = {}
 const users = {}
-const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen', 'aqua', 'white', 'blueviolet']
+const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen', 'aqua', 'blueviolet', 'cadetblue', 'chartreuse', 'darkolivegreen', 'gold', 'hotpink', 'crimson', 'midnightblue', 'moccasin', 'black']
 
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
