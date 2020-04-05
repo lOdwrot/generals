@@ -27,6 +27,9 @@ export default () => {
         <div className={styles['info-panel']}>
             <div className={classnames(styles['grid-container'])}>
                 <div/>
+                <div>
+                    Team
+                </div>
                 <div className={styles['room-header']}>
                     Player
                 </div>
@@ -40,6 +43,9 @@ export default () => {
                                     className={styles['color-box']}
                                     style={{background: userColors[v.socketId]}}
                                 />
+                            </div>
+                            <div>
+                                {v.teamId}
                             </div>
                             <div>
                                 {`${v.userName}`}

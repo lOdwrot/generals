@@ -34,7 +34,7 @@ io.on('loser', () => {
     playLostMusic()
     store.dispatch(setPlayerRole('spectator'))
 })
-io.on('winner', winner => {
+io.on('winner', () => {
     playWinMusic()
     store.dispatch(setPlayerRole('spectator'))
 })
@@ -70,6 +70,7 @@ export const joinToRoom = (roomId) => io.emit('join', {
     userName: store.getState().user.userName
 })
 export const setRoomSettings = (settings) => io.emit('setRoomSettings', settings)
+export const changeTeam = (nextTeamId) => io.emit('changeTeam', nextTeamId)
 io.on('setRoomSettings', settings => store.dispatch(replaceGameSetting(settings)))
 io.on('joined', user => store.dispatch(setUser(user)))
 io.on('refreshPlayersInRoom', players => store.dispatch(setPlayers(players)))

@@ -1,0 +1,24 @@
+.rooms-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding-bottom: 5px;
+}
+
+.room-name {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.players-block {
+    min-height: 50px;
+}
+
+.rooms-wrapper > div{
+    min-width: 125px;
+    margin-left: 3px;
+    margin-right: 3px;
+}

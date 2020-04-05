@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUserName } from '../storage/user/user.action';
 import styles from './Lobby.module.scss'
 import { userSelector } from '../storage/user/user.selector';
+import RoomTeams from '../RoomTeams/RoomTeams';
 
 const FormItem = Form.Item
 
@@ -18,7 +19,7 @@ export default () => {
     return (
         <div className={styles['lobby-wrapper']}>
             <div className={styles['lobby-content-box']}>
-                <h3 className={styles['header']}>Overlight Generals</h3>
+                <h3 className={styles['header']}>Overlight Generals: Battle Of Middle Ages</h3>
                 <FormItem help='User Name'>
                     <div style={{display: 'flex'}}>
                         <Input
@@ -27,42 +28,50 @@ export default () => {
                             placeholder='User Name'
                             disabled={isNameConfirmed || isAllDisabled}
                         />
-                        <Button 
-                            type='primary'
-                            disabled={isNameConfirmed || isAllDisabled}
-                            onClick={() => setIsNameConfirmed(true)}
-                        >
-                            Confirm
-                        </Button>
+
+                        {
+                            !user.roomId &&
+                            <Button 
+                                type='primary'
+                                disabled={isNameConfirmed || isAllDisabled}
+                                onClick={() => setIsNameConfirmed(true)}
+                            >
+                                Confirm
+                            </Button>
+                        }
                     </div>
                 </FormItem>
-                <Button
-                    disabled={user.roomId}
-                    onClick={createRoom}
-                    style={{width: '255px'}}
-                >
-                    Create Room
-                </Button>
                 {
                     !user.roomId &&
-                    <FormItem help={'Room ID to join'}>
-                        <div style={{display: 'flex'}}>
-                            <Input 
-                                placeholder='Room ID' 
-                                onChange={(e) => setRoomId(e.target.value)}
-                            />
-                            <Button onClick={() => joinToRoom(roomId)}>
-                                Join
-                            </Button>
-                        </div>
-                    </FormItem>
+                    <div>
+                        <Button
+                            disabled={user.roomId}
+                            onClick={createRoom}
+                            style={{width: '255px'}}
+                        >
+                            Create Room
+                        </Button>
+                    </div>
+                }
+                {
+                    !user.roomId &&
+                    <div>
+                        <FormItem help={'Room ID to join'}>
+                            <div style={{display: 'flex'}}>
+                                <Input 
+                                    placeholder='Room ID' 
+                                    onChange={(e) => setRoomId(e.target.value)}
+                                />
+                                <Button onClick={() => joinToRoom(roomId)}>
+                                    Join
+                                </Button>
+                            </div>
+                        </FormItem>
+                    </div>
                 }
 
                 {
-                    user.roomId &&
-                    <FormItem help={'Room ID'}>
-                        <Input value={user.roomId}/>
-                    </FormItem>
+                    user.roomId && <RoomTeams/>
                 }
             </div>
         </div>

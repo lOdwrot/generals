@@ -1,6 +1,7 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
-import {flatten} from 'lodash'
+import {flatten, uniq} from 'lodash'
+import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd } from "./InstantActions"
 
 const getNextCoordinates = (from, direction) => {
     let x = from.x
@@ -33,14 +34,15 @@ export class Game {
         this.tourCounter = 0
         this.unitMovesCounter = 0
         this.intervalId = null
-        this.loosers = []
         this.players = [...players]
+        this.roomId = players[0].roomId
         this.nonAggression = nonAggression
         this.turnDuration = turnDuration
         this.CASTLE_INSTANTIATION_INTERVAL = castleProduction
         this.UNITS_INSTANTIATION_INTERVAL = fieldProduction
         this.usersStats = null
         this.isNonAggresionPactValid = true
+        this.isGameOver = false
         // TO FIX
         // coordinates missmatch
         this.board = generateMap({
@@ -61,19 +63,18 @@ export class Game {
     }
 
     tic() {
-        const removedCommands = {}
-
         Object.keys(this.moves).forEach(socketId => {
             let moves = this.moves[socketId]
             let executableIndex = moves.findIndex(v => this.isCommandExecutable(v, socketId))
             if (executableIndex >= 0) {
                 this.executeCommand(moves[executableIndex], socketId)
-                removedCommands[socketId] = moves
-                                            .filter((v, index) => index <= executableIndex)
-                                            .map(v => v.id)
+                notifyRemovedCommands(
+                    socketId,
+                    moves.slice(0, executableIndex + 1).map(v => v.id)
+                )
                 this.moves[socketId] = moves.slice(executableIndex + 1)
             } else {
-                removedCommands[socketId] = moves.map(v => v.id)
+                notifyRemovedCommands(socketId, moves.map(v => v.id))
                 this.moves[socketId] = []
             }
         })
@@ -85,27 +86,34 @@ export class Game {
 
         this.unitMovesCounter++
         
-        let endOfPeace = false
         if (this.tourCounter === this.nonAggression) {
             this.isNonAggresionPactValid = false
-            if(this.nonAggression >= 50) {
-                endOfPeace = true
-            }
+            notifyPeaceEnd(this.roomId)
         }
         
         const nextUserStats = this.calculateUserStats()
-        let newLoosers = this.usersStats 
-                            ? Object.keys(nextUserStats)
-                                .filter(v => nextUserStats[v].units === 0 && this.usersStats[v].units > 0)
-                            : []
+        if(this.usersStats) {
+            Object.keys(nextUserStats)
+                .filter(v => nextUserStats[v].units === 0 && this.usersStats[v].units > 0)
+                .forEach(v => notifyLost(v))
+        }
 
         this.usersStats = nextUserStats
-        return {
+        notifyNextBoard(this.roomId, this.board)
+        notifyNextStats(this.roomId, {
             usersStats: this.usersStats,
-            tourCounter: this.tourCounter,
-            removedCommands,
-            newLoosers,
-            endOfPeace
+            tourCounter: this.tourCounter
+        })
+
+        const remainingTeamIds = uniq(
+            this.players
+                .filter(v => nextUserStats[v.socketId].units > 0)
+                .map(v => v.teamId)
+        )
+
+        if (remainingTeamIds.length === 1) {
+            this.isGameOver = true
+            notifyGameEnd(this.roomId)
         }
     }
 
@@ -186,7 +194,6 @@ export class Game {
     }
 
     conquerPlayer(agressorId, victimId, capitolField) {
-        this.loosers.push(victimId)
         flatten(this.board)
             .filter(v => v.owner === victimId)
             .forEach(v => v.owner = agressorId)

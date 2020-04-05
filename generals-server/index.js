@@ -16,16 +16,12 @@ const server = http
                 .createServer(app)
                 .listen(PORT)
 
-// app.get('/', (req, res) => {
-//     res.send('<h1>Welcome in Generals</h1>');
-// })
-
 app.use(express.static(path.join(__dirname, 'clientBuild')));
 app.get('*', (req, res) => {
     res.sendfile(path.join(__dirname, 'clientBuild/index.html'));
 })
 
-const io = socketIO(server)
+export const io = socketIO(server)
 const rooms = {}
 const users = {}
 const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', 'blue', 'lightgreen', 'aqua', 'blueviolet', 'cadetblue', 'chartreuse', 'darkolivegreen', 'gold', 'hotpink', 'crimson', 'midnightblue', 'moccasin', 'black']
@@ -36,8 +32,9 @@ io.on('connection', (socket) => {
         const user = {
             socketId: socket.id,
             color: colors[0],
+            teamId: 0,
             userName,
-            roomId
+            roomId,
         }
 
         rooms[roomId] = {
@@ -49,7 +46,7 @@ io.on('connection', (socket) => {
         users[socket.id] = user
         socket.join(roomId)
         socket.emit('joined', user)
-        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
+        refreshPlayersInRoom(roomId)
     })
 
     socket.on('join', ({roomId, userName}) => {
@@ -63,19 +60,25 @@ io.on('connection', (socket) => {
             socketId: socket.id,
             color,
             userName,
-            roomId
+            roomId,
+            teamId: roomUsers.length
         }
 
         rooms[roomId].users = [...roomUsers, user]
         users[socket.id] = user
         socket.join(roomId)
         socket.emit('joined', user)
-        io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
+        refreshPlayersInRoom(roomId)
+    })
+
+    socket.on('changeTeam', nextTeamId => {
+        const user = users[socket.id]
+        user.teamId = nextTeamId
+        refreshPlayersInRoom(user.roomId)
     })
 
     socket.on('sendMessage', message => {
         const user = users[socket.id]
-        if(!user) return
         if (!user) return console.log('No user registered')
         io.to(user.roomId).emit('chat', `${user.userName}: ${message}`)
     })
@@ -100,45 +103,22 @@ io.on('connection', (socket) => {
         io.to(user.roomId).emit('startBattle')
         io.to(user.roomId).emit('updateBoard', game.board)
         game.intervalId = setInterval(() => {
-            const {removedCommands, usersStats, tourCounter, newLoosers, endOfPeace} = game.tic()
-            if(endOfPeace) {
-                io.to(user.roomId).emit('endOfPeace')
-            } 
-
-            Object.keys(removedCommands)
-                .forEach(socketId => {
-                    if(!removedCommands[socketId].length) return
-                    io.to(socketId).emit('removeCommands', removedCommands[socketId])
-                })
-
-            io.to(user.roomId).emit('updateBoard', game.board)
-            io.to(user.roomId).emit('updateStats', {usersStats, tourCounter})
-            newLoosers.forEach(v => io.to(v).emit('loser'))
-            
-            const winner = game.getWinner()
-            if(winner) {
+            game.tic()
+            if(game.isGameOver) {
                 clearInterval(game.intervalId)
-                io.to(user.roomId).emit('winner', winner)
                 delete room.game
             }
         }, (game.turnDuration / MOVE_TO_RESP_RATIO))
     })
 
     socket.on('addCommand', command => {
-        const user = users[socket.id]
-        if(!user) return
-        const room = rooms[user.roomId]
-        if(!room.game) return
-        room.game.addCommand(user.socketId, command)
+        if(!checkIsGameForUser(socket.id)) return
+        getUserGame(socket.id).addCommand(socket.id, command)
     })
 
     socket.on('eraseCommands', commandIds => {
-        const user = users[socket.id]
-        if(!user) return
-        const room = rooms[user.roomId]
-        if(!room) return
-        if(!room.game) return
-        room.game.eraseCommands(user.socketId, commandIds)
+        if(!checkIsGameForUser(socket.id)) return
+        getUserGame(socket.id).eraseCommands(socket.id, commandIds)
     })
 
     socket.on('disconnect', () => handleDisconnect(socket.id))
@@ -168,6 +148,16 @@ const handleDisconnect = (socketId) => {
 
     clearInterval(room.game && room.game.intervalId)
     delete rooms[user.roomId]
+}
+
+const refreshPlayersInRoom = (roomId) => io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
+const getUserGame = (socketId) => rooms[users[socketId].roomId].game
+const checkIsGameForUser = (socketId) => {
+    const user = users[socketId]
+    if(!user) return false
+    const room = rooms[user.roomId]
+    if(!room || !room.game) return false
+    return true
 }
 
 console.log('Server initialized sucessfully!!')
