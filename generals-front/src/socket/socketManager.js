@@ -11,10 +11,11 @@ import { playersSelector } from '../storage/game/game.selector'
 
 const io = socketIO(config.address)
 
-// GAME
+// MAIN ACTIONS
 export const startGame = (gameParams) => io.emit('start', gameParams)
 export const addCommand = (command) => io.emit('addCommand', command)
 export const eraseCommands = (commandIds) => io.emit('eraseCommands', commandIds)
+export const executeInstantCommand = (commandType, details) => io.emit('executeInstantCommand', commandType, details)
 io.on('startBattle', () => {
     store.dispatch(setActiveField({x: -1, y: -1}))
     store.dispatch(setCommands([]))
@@ -32,7 +33,6 @@ io.on('startBattle', () => {
 io.on('updateStats', (stats) => store.dispatch(updateStats(stats)))
 io.on('loser', () => {
     playLostMusic()
-    store.dispatch(setPlayerRole('spectator'))
 })
 io.on('winner', () => {
     playWinMusic()
@@ -44,10 +44,12 @@ io.on('endOfPeace', () => {
 })
 
 io.on('updateBoard', board => {
-    const socketId = store.getState().user.socketId
+    const teamId = store.getState().user.teamId
+    const playerIdToTeamId = store.getState().game.playerIdToTeamId
+    
     board
         .flat()
-        .filter(v => v.owner === socketId)
+        .filter(v => playerIdToTeamId[v.owner] === teamId)
         .forEach((({x, y}) => {
             for(let vX = x -1; vX <= x + 1; vX++)
                 for(let vY = y -1; vY <= y + 1; vY++) 

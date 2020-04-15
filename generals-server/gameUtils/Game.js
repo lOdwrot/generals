@@ -35,6 +35,7 @@ export class Game {
         this.unitMovesCounter = 0
         this.intervalId = null
         this.players = [...players]
+        this.playerIdToTeam = players.reduce((acc, v) => ({...acc, [v.socketId]: v.teamId}), {})
         this.roomId = players[0].roomId
         this.nonAggression = nonAggression
         this.turnDuration = turnDuration
@@ -112,6 +113,7 @@ export class Game {
         )
 
         if (remainingTeamIds.length === 1) {
+            console.log('Game Over!')
             this.isGameOver = true
             notifyGameEnd(this.roomId)
         }
@@ -167,7 +169,10 @@ export class Game {
 
         fromField.units = fromField.units - movedUnits
 
-        if(toField.owner === fromField.owner) {
+        if(this.playerIdToTeam[toField.owner] === this.playerIdToTeam[fromField.owner]) {
+            if (toField.type != 'capitol') {
+                toField.owner = socketId
+            }
             toField.units += movedUnits
             return
         }
@@ -212,9 +217,9 @@ export class Game {
             if(
                 this.isNonAggresionPactValid && 
                 toField.owner !== 'n' &&
-                toField.owner !== fromField.owner
+                this.playerIdToTeam[toField.owner] !== this.playerIdToTeam[fromField.owner]
             ) return false
-
+             
             if(
                 !fromField || !toField ||
                 fromField.owner != socketId ||
@@ -222,7 +227,7 @@ export class Game {
                 toField.type === 'mountain'
             ) return false
         }
-
+        
         return true
     }
 
@@ -232,8 +237,49 @@ export class Game {
     }
 
     getBoardField = ({x, y}) => this.board[y][x]
-    getWinner = () => {
-        if(this.players.length - this.loosers.length > 1) return
-        return this.players.find(v => !this.loosers.includes(v.socketId))
+    getCurrentPlayerCapitol = (playerId) => flatten(this.board).find(v => v.type === 'capitol' && v.owner === playerId)
+    // Instant Actions
+    reborn(playerId, coordinates) {
+        const field = this.getBoardField(coordinates)
+        if(field.type !== 'castle') return console.log('Can not reborn outside of the castle')
+        if(field.units < 50) return console.log('Require 50+ units to reborn')
+        if(this.playerIdToTeam[playerId] !== this.playerIdToTeam[field.owner]) return console.log('Can not reborn on enemy grounds')
+        if(this.usersStats[playerId].lands) return console.log('Can not reborn alive player')
+        this.usersStats[playerId].lands = 1
+
+        field.type = 'capitol'
+        field.owner = playerId
+        field.units -= 50
     }
+
+    moveCapitol(playerId, coordinates) {
+        const field = this.getBoardField(coordinates)
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId)
+
+        if (!currentCapitol) return console.log('No capitol for player found')
+        if (currentCapitol.units < 150) return console.log('Not enough units in capitol')
+        if (field.type !== 'castle') return console.log('Capitol can be moved only to other, own castle')
+        if (field.owner !== playerId) return console.log('Can not move capitol to another player')
+
+        currentCapitol.type = 'castle'
+        currentCapitol.units -= 150
+
+        field.type = 'capitol'
+    }
+
+    plowField(playerId, coordinates) {
+        const field = this.getBoardField(coordinates)
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId)
+
+        if (!currentCapitol) return console.log('No capitol for player found')
+        if (currentCapitol.units < 25) return console.log('Not enough units in capitol')
+        if (field.type !== 'plain') return console.log('Only plain fields can be plowned')
+        if (field.owner !== playerId) return console.log('Can not plowned other player fields')
+
+        currentCapitol.units -= 25
+
+        field.units = null
+        field.owner = 'n'
+    }
+
 } 

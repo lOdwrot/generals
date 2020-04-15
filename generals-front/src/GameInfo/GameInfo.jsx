@@ -7,17 +7,20 @@ import { Button } from 'antd'
 import { setPlayerRole } from '../storage/game/game.action'
 import { gameSettingsSelector } from '../storage/settings/settings.selector'
 import { playPeacfullBackgoundMusic } from '../audioPlayer/audioPlayer'
+import { userSelector } from '../storage/user/user.selector'
 
 export default () => {
     const players = useSelector(playersSelector)
     const userColors = useSelector(userColorsSelector)
     const userStats = useSelector(usersStatsSelector)
+    const user = useSelector(userSelector)
     const tour = useSelector(tourCounterSelector)
     const playerRole = useSelector(playerRoleSelector)
     const {nonAggression} = useSelector(gameSettingsSelector)
     const dispatch = useDispatch()
 
     const handleClickLobby = () => dispatch(setPlayerRole('lobby'))
+    const handleClickAcceptFailure = () => dispatch(setPlayerRole('spectator'))
     const handleClickHistory = () => {
         playPeacfullBackgoundMusic()
         dispatch(setPlayerRole('historySpectator'))
@@ -25,6 +28,9 @@ export default () => {
 
     return (
         <div className={styles['info-panel']}>
+            <div>
+                {user.socketId}
+            </div>
             <div className={classnames(styles['grid-container'])}>
                 <div/>
                 <div>
@@ -82,6 +88,16 @@ export default () => {
                         style={{width: '100%'}}
                     >
                         Back To Lobby!
+                    </Button>
+                }
+                {
+                    playerRole === 'fighter' && userStats[user.socketId]?.lands === 0 &&
+                    <Button
+                        onClick={handleClickAcceptFailure}
+                        type={"danger"}
+                        style={{width: '100%'}}
+                    >
+                        Accept Failure
                     </Button>
                 }
             </div>

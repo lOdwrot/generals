@@ -1,0 +1,25 @@
+.ability-panel {
+    background: white;
+    z-index: 999;
+    position: fixed;
+    left: 0;
+    top: 150px
+}
+
+.ability-block {
+    width: 80px;
+    height: 80px;
+    border: solid 1px black;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+.ability-description-box {
+    max-width: 350px;
+}
+
+.selected-block {
+    border: solid 3px red !important;
+}

@@ -12,6 +12,7 @@ import { playOpeningMusic } from './audioPlayer/audioPlayer';
 import AudioControl from './AudioControl/AudioControl';
 import './App.css'
 import BattleHistory from './BattleHistory/BattleHistory';
+import Abilities from './Abilities/Abilities';
 
 function App() {
   const playerRole = useSelector(playerRoleSelector)
@@ -22,6 +23,7 @@ function App() {
   return (
     <div>
       <AudioControl/>
+      <Abilities/>
       <GameInfo/>
       <LiveChat/>
       {

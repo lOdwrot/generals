@@ -1,10 +1,12 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { userSelector } from '../storage/user/user.selector'
-import { activeFieldSelector, userColorsSelector, moveTypeSelector } from '../storage/game/game.selector'
+import { activeFieldSelector, userColorsSelector, moveTypeSelector, abilitySelectionSelector, playerIdToTeamIdSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
 import { clickOnActiveField, setHalfUnitsMove } from './Reactions'
+import {executeInstantCommand} from '../socket/socketManager'
 import {isEqual} from 'lodash'
+import { setAbilitySelection } from '../storage/game/game.action'
 
 export default React.memo(({
     field,
@@ -15,11 +17,17 @@ export default React.memo(({
     const user = useSelector(userSelector)
     const activeField = useSelector(activeFieldSelector)
     const moveType = useSelector(moveTypeSelector)
+    const abilitySelection = useSelector(abilitySelectionSelector)
+    const playerIdToTeamId = useSelector(playerIdToTeamIdSelector)
+    const dispatch = useDispatch()
+
     const { type, owner, units, x, y, isVisible } = field
     const isOwner = user.socketId === owner
     const isActiveField = activeField.x === x && activeField.y === y
 
     const handleClickField = () => {
+        if(isClickableByAbility()) executeInstantCommand(abilitySelection, {x, y}) 
+        if (abilitySelection) dispatch(setAbilitySelection(null))
         if (!isOwner || seeAll) return
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)
@@ -32,7 +40,12 @@ export default React.memo(({
     }
 
     const getFieldUnits = () => (seeAll || !!isVisible) && (units != null) && units
-    
+    const isClickableByAbility = () => {
+        if(!abilitySelection) return false
+        if(abilitySelection === 'reborn' && type === 'castle' && playerIdToTeamId[owner] === playerIdToTeamId[user.socketId]) return true
+        if(abilitySelection === 'moveCapitol' && type === 'castle' && owner === user.socketId) return true
+        if(abilitySelection === 'plowingField' && type === 'plain' && owner === user.socketId) return true
+    }
     // not-visible
     return (
         <div 
@@ -42,7 +55,7 @@ export default React.memo(({
                 backgroundImage: getImageLink(type, isVisible || seeAll)
             }}
             className={classnames('board-tile', {
-                'clicable': isOwner,
+                'clicable': isOwner || isClickableByAbility(),
                 'selected-field': isActiveField,
             })}
         >

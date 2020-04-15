@@ -45,3 +45,9 @@ export const setMoveType = (type) => ({
     type: SET_MOVE_TYPE,
     payload: type
 })
+
+export const SET_ABILITY_SELECTION = 'game.abilitySelection'
+export const setAbilitySelection = (ability) => ({
+    type: SET_ABILITY_SELECTION,
+    payload: ability
+})

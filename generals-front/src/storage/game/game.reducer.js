@@ -2,6 +2,7 @@ import * as actions from './game.action'
 
 const INITIAL_STATE = {
     players: [],
+    playerIdToTeamId: {},
     board: [[]],
     activeField: {x: -1, y: -1},
     commands: [],
@@ -10,6 +11,7 @@ const INITIAL_STATE = {
     tourCounter: 0,
     playerRole: 'lobby',
     moveType: 'all',
+    abilitySelection: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -17,7 +19,8 @@ export default (state = INITIAL_STATE, action) => {
         case actions.SET_PLAYERS:
             return {
                 ...state, 
-                players: action.payload, 
+                players: action.payload,
+                playerIdToTeamId: action.payload.reduce((acc, v) => ({...acc, [v.socketId]: v.teamId}), {}),
                 userColors: action.payload.reduce((acc, v) => ({...acc, [v.socketId]: v.color}), {})
             }
         case actions.SET_BOARD:
@@ -34,6 +37,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, ...action.payload}
         case actions.SET_MOVE_TYPE:
             return {...state, moveType: action.payload}
+        case actions.SET_ABILITY_SELECTION:
+            return {...state, abilitySelection: action.payload}
         default:
             return state
     }

@@ -121,6 +121,14 @@ io.on('connection', (socket) => {
         getUserGame(socket.id).eraseCommands(socket.id, commandIds)
     })
 
+    socket.on('executeInstantCommand', (commandType, details) => {
+        if(!checkIsGameForUser(socket.id)) return
+        const game = getUserGame(socket.id)
+        if(commandType === 'reborn') game.reborn(socket.id, details)
+        if(commandType === 'moveCapitol') game.moveCapitol(socket.id, details)
+        if(commandType === 'plowingField') game.plowField(socket.id, details)
+    })
+
     socket.on('disconnect', () => handleDisconnect(socket.id))
 })
 
