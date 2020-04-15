@@ -55,7 +55,7 @@ export default React.memo(({
                 backgroundImage: getImageLink(type, isVisible || seeAll)
             }}
             className={classnames('board-tile', {
-                'clicable': isOwner || isClickableByAbility(),
+                'clickable': isOwner || isClickableByAbility(),
                 'selected-field': isActiveField,
             })}
         >
@@ -89,6 +89,7 @@ function getImageLink(type, isVisible) {
     else if(type === 'castle') imagePath = '/city.png'
     else if(type === 'mountain') imagePath = '/mountain.png'
     else if(isVisible && type === 'capitol') imagePath = '/crown.png'
+    else if(isVisible && type === 'defendedCapitol') imagePath = '/defendedCrown.png'
 
     return `url(${process.env.PUBLIC_URL + imagePath})`
 }

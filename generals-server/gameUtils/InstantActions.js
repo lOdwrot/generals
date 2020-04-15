@@ -6,3 +6,4 @@ export const notifyNextBoard = (roomId, board) => io.to(roomId).emit('updateBoar
 export const notifyNextStats = (roomId, stats) => io.to(roomId).emit('updateStats', stats)
 export const notifyLost = (socketId) => io.to(socketId).emit('loser')
 export const notifyGameEnd = (roomId) => io.to(roomId).emit('winner')
+export const notifyCooldownTic = (roomId) => io.to(roomId).emit('cooldownTic')

@@ -19,7 +19,7 @@ export default () => {
     return (
         <div className={styles['lobby-wrapper']}>
             <div className={styles['lobby-content-box']}>
-                <h3 className={styles['header']}>Overlight Generals: Battle Of Middle Ages</h3>
+                <h3 className={styles['header']}>Overlight Generals: Kings Alliance</h3>
                 <FormItem help='User Name'>
                     <div style={{display: 'flex'}}>
                         <Input

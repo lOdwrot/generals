@@ -6,6 +6,7 @@ import uniqid from 'uniqid'
 import { Game } from './gameUtils/Game'
 import { MOVE_TO_RESP_RATIO } from './config'
 import path from 'path'
+import { abilities } from './gameUtils/Abilities'
 
 const PORT = process.env.PORT || 5500
 
@@ -105,6 +106,7 @@ io.on('connection', (socket) => {
         game.intervalId = setInterval(() => {
             game.tic()
             if(game.isGameOver) {
+                console.log('End Game')
                 clearInterval(game.intervalId)
                 delete room.game
             }
@@ -124,9 +126,17 @@ io.on('connection', (socket) => {
     socket.on('executeInstantCommand', (commandType, details) => {
         if(!checkIsGameForUser(socket.id)) return
         const game = getUserGame(socket.id)
-        if(commandType === 'reborn') game.reborn(socket.id, details)
-        if(commandType === 'moveCapitol') game.moveCapitol(socket.id, details)
-        if(commandType === 'plowingField') game.plowField(socket.id, details)
+        if(
+            (commandType === 'reborn' && game.reborn(socket.id, details)) ||
+            (commandType === 'moveCapitol' && game.moveCapitol(socket.id, details)) ||
+            (commandType === 'plowingField' && game.plowField(socket.id, details)) ||
+            (commandType === 'unite' && game.unite(socket.id)) ||
+            (commandType === 'defender' && game.defender(socket.id))
+        ) {
+            game.refreshStats()
+            io.to(socket.id).emit('setCooldown', commandType, abilities[commandType].cooldown)
+        }
+        console.log('Processed Event')
     })
 
     socket.on('disconnect', () => handleDisconnect(socket.id))

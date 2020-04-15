@@ -51,3 +51,14 @@ export const setAbilitySelection = (ability) => ({
     type: SET_ABILITY_SELECTION,
     payload: ability
 })
+
+export const SET_COOLDOWN = 'game.setCooldown'
+export const setCooldown = (name, value) => ({
+    type: SET_COOLDOWN,
+    payload: {[name]: value}
+})
+
+export const COOLDOWN_TIC = 'game.cooldownTic'
+export const cooldownTic = () => ({
+    type: COOLDOWN_TIC,
+})

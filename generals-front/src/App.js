@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import 'antd/dist/antd.css'
-import io from './socket/socketManager'
 import Lobby from './Lobby/Lobby.jsx';
 import LiveChat from './LiveChat/LiveChat';
 import Board from './Game/Board';

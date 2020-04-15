@@ -1,7 +1,10 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
 import {flatten, uniq} from 'lodash'
-import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd } from "./InstantActions"
+import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic } from "./InstantActions"
+import { abilities } from './Abilities'
+
+const isCapitol = (type) => type === 'capitol' || type === 'defendedCapitol'
 
 const getNextCoordinates = (from, direction) => {
     let x = from.x
@@ -44,6 +47,7 @@ export class Game {
         this.usersStats = null
         this.isNonAggresionPactValid = true
         this.isGameOver = false
+        this.activeDefenders = []
         // TO FIX
         // coordinates missmatch
         this.board = generateMap({
@@ -83,6 +87,8 @@ export class Game {
         if (this.unitMovesCounter % MOVE_TO_RESP_RATIO === 0) {
             this.tourCounter++
             this.instantiateUnits()
+            this.recalculateDefenders()
+            notifyCooldownTic(this.roomId)
         }
 
         this.unitMovesCounter++
@@ -92,6 +98,23 @@ export class Game {
             notifyPeaceEnd(this.roomId)
         }
         
+        this.refreshStats()
+        
+
+        const remainingTeamIds = uniq(
+            this.players
+                .filter(v => nextUserStats[v.socketId].units > 0)
+                .map(v => v.teamId)
+        )
+
+        if (remainingTeamIds.length === 1) {
+            console.log('Game Over!')
+            this.isGameOver = true
+            notifyGameEnd(this.roomId)
+        }
+    }
+
+    refreshStats() {
         const nextUserStats = this.calculateUserStats()
         if(this.usersStats) {
             Object.keys(nextUserStats)
@@ -105,18 +128,6 @@ export class Game {
             usersStats: this.usersStats,
             tourCounter: this.tourCounter
         })
-
-        const remainingTeamIds = uniq(
-            this.players
-                .filter(v => nextUserStats[v.socketId].units > 0)
-                .map(v => v.teamId)
-        )
-
-        if (remainingTeamIds.length === 1) {
-            console.log('Game Over!')
-            this.isGameOver = true
-            notifyGameEnd(this.roomId)
-        }
     }
 
     calculateUserStats() {
@@ -135,7 +146,7 @@ export class Game {
                 const stats = userStats[owner]
                 stats.units += units
                 stats.lands++
-                if (type === 'castle' || type === 'capitol') {
+                if (type === 'castle' || isCapitol(type)) {
                     stats.castles++ 
                 }
             })
@@ -170,21 +181,24 @@ export class Game {
         fromField.units = fromField.units - movedUnits
 
         if(this.playerIdToTeam[toField.owner] === this.playerIdToTeam[fromField.owner]) {
-            if (toField.type != 'capitol') {
+            if (!isCapitol(toField.type)) {
                 toField.owner = socketId
             }
             toField.units += movedUnits
             return
         }
 
+        if (toField.type === 'defendedCapitol') toField.units = toField.units * 2
         if (toField.units < movedUnits) {
-            if (toField.type == 'capitol') {
+            if (isCapitol(toField.type)) {
                 this.conquerPlayer(fromField.owner, toField.owner, toField)
+                toField.type = 'castle'
             }
             toField.owner = socketId
         }
         
         toField.units = Math.abs(toField.units - movedUnits)
+        if (toField.type === 'defendedCapitol' && toField.owner !== fromField.owner) toField.units = Math.floor(toField.units/2)
     }
 
     instantiateUnits() {
@@ -193,7 +207,7 @@ export class Game {
             ocupiedFields.forEach(v => v.units++)
         } else if(this.tourCounter % this.CASTLE_INSTANTIATION_INTERVAL === 0) {
             ocupiedFields
-                .filter(v => v.type === 'capitol' || v.type === 'castle')
+                .filter(v =>  isCapitol(v.type) || v.type === 'castle')
                 .forEach(v => v.units++)
         }
     }
@@ -237,49 +251,93 @@ export class Game {
     }
 
     getBoardField = ({x, y}) => this.board[y][x]
-    getCurrentPlayerCapitol = (playerId) => flatten(this.board).find(v => v.type === 'capitol' && v.owner === playerId)
+    getCurrentPlayerCapitol = (playerId) => flatten(this.board).find(v => isCapitol(v.type) && v.owner === playerId)
     // Instant Actions
     reborn(playerId, coordinates) {
         const field = this.getBoardField(coordinates)
+        const {cost} = abilities.reborn
         if(field.type !== 'castle') return console.log('Can not reborn outside of the castle')
-        if(field.units < 50) return console.log('Require 50+ units to reborn')
+        if(field.units < cost) return console.log('Not enough units')
         if(this.playerIdToTeam[playerId] !== this.playerIdToTeam[field.owner]) return console.log('Can not reborn on enemy grounds')
         if(this.usersStats[playerId].lands) return console.log('Can not reborn alive player')
         this.usersStats[playerId].lands = 1
 
         field.type = 'capitol'
         field.owner = playerId
-        field.units -= 50
+        field.units -= cost
+        return true
     }
 
     moveCapitol(playerId, coordinates) {
         const field = this.getBoardField(coordinates)
         const currentCapitol = this.getCurrentPlayerCapitol(playerId)
+        const {cost} = abilities.moveCapitol
 
         if (!currentCapitol) return console.log('No capitol for player found')
-        if (currentCapitol.units < 150) return console.log('Not enough units in capitol')
+        if (currentCapitol.units < cost) return console.log('Not enough units in capitol')
         if (field.type !== 'castle') return console.log('Capitol can be moved only to other, own castle')
         if (field.owner !== playerId) return console.log('Can not move capitol to another player')
 
+        field.type = currentCapitol.type
         currentCapitol.type = 'castle'
-        currentCapitol.units -= 150
+        currentCapitol.units -= cost
 
-        field.type = 'capitol'
+        return true
     }
 
     plowField(playerId, coordinates) {
         const field = this.getBoardField(coordinates)
         const currentCapitol = this.getCurrentPlayerCapitol(playerId)
+        const {cost} = abilities.plowingField
 
         if (!currentCapitol) return console.log('No capitol for player found')
-        if (currentCapitol.units < 25) return console.log('Not enough units in capitol')
+        if (currentCapitol.units < cost) return console.log('Not enough units in capitol')
         if (field.type !== 'plain') return console.log('Only plain fields can be plowned')
         if (field.owner !== playerId) return console.log('Can not plowned other player fields')
 
-        currentCapitol.units -= 25
+        currentCapitol.units -= cost
 
         field.units = null
         field.owner = 'n'
+        return true
     }
 
+    unite(playerId) {
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId) 
+        if(!currentCapitol) return console.log('No capitol for player')
+        const playerGrounds = flatten(this.board)
+                                .filter(v => v.owner === playerId)
+
+        const totalArmy = playerGrounds.reduce((acc, v) => acc + v.units, 0)
+        playerGrounds.forEach(v => {
+            v.units = null
+            v.owner = 'n'
+        })
+
+        currentCapitol.owner = playerId
+        currentCapitol.units = totalArmy
+        return true
+    }
+
+    defender(playerId) {
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId) 
+        if(!currentCapitol) return console.log('No capitol for player')
+
+        const {cost, duaration} = abilities.defender
+        if(currentCapitol.units < cost) return console.log('Not enough units')
+
+        currentCapitol.units -= cost
+        currentCapitol.type = 'defendedCapitol'
+        this.activeDefenders.push({playerId, duaration})
+        return true
+    }
+
+    recalculateDefenders() {
+        this.activeDefenders.forEach((v) => {
+            if(--v.duaration > 0) return
+            const capitol = this.getCurrentPlayerCapitol(v.playerId)
+            if(capitol) capitol.type = 'capitol'
+        })
+        this.activeDefenders = this.activeDefenders.filter(v => v.duaration)
+    }
 } 
