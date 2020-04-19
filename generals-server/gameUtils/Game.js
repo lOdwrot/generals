@@ -1,7 +1,7 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
 import {flatten, uniq} from 'lodash'
-import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic } from "./InstantActions"
+import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle } from "./InstantActions"
 import { abilities } from './Abilities'
 
 const isCapitol = (type) => type === 'capitol' || type === 'defendedCapitol'
@@ -194,6 +194,9 @@ export class Game {
                 this.conquerPlayer(fromField.owner, toField.owner, toField)
                 toField.type = 'castle'
             }
+            else if (toField.type === 'castle') {
+                notifySound_conquerCastle(fromField.owner)
+            }
             toField.owner = socketId
         }
         
@@ -217,6 +220,8 @@ export class Game {
             .filter(v => v.owner === victimId)
             .forEach(v => v.owner = agressorId)
 
+        notifySound_conquerCapitol(agressorId)
+        notifySound_lostCapitol(victimId)
         capitolField.type = 'castle'
     }
 

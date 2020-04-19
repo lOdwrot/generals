@@ -5,11 +5,12 @@ import { setUser } from '../storage/user/user.action'
 import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands, setAbilitySelection, setCooldown, cooldownTic } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
-import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic } from '../audioPlayer/audioPlayer'
+import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol } from '../audioPlayer/audioPlayer'
 import { eraseHistory, setUserColorsInHistory } from '../storage/history/history.action'
 import { playersSelector } from '../storage/game/game.selector'
 
 const io = socketIO(config.address)
+
 
 // MAIN ACTIONS
 export const startGame = (gameParams) => io.emit('start', gameParams)
@@ -60,8 +61,20 @@ io.on('updateBoard', board => {
     store.dispatch(setBoard(board))
 })
 io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds)))
-io.on('setCooldown', (cooldownName, value) => store.dispatch(setCooldown(cooldownName, value)))
+io.on('setCooldown', (cooldownName, value) => {
+    store.dispatch(setCooldown(cooldownName, value))
+    if (cooldownName === 'reborn') playRebornDialog()
+    if (cooldownName === 'moveCapitol') playMoveCapitolConfirmation()
+    if (cooldownName === 'plowingField') playPlowingFieldConfirmation()
+    if (cooldownName === 'unite') playUniteArmyConfirmation()
+    if (cooldownName === 'defender') playDefenderConfirmation()
+})
 io.on('cooldownTic', () => store.dispatch(cooldownTic()))
+
+// SOUND_NOTYFICATIONS
+io.on('sound_ConquerCastle', playConquerCastle)
+io.on('sound_ConquerCapitol', playConquerCapitol)
+io.on('sound_LostCapitol', playLostCapitol)
 
 // CHAT
 export const sendMessage = (message) => io.emit('sendMessage', message)

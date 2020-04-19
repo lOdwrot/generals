@@ -19,7 +19,12 @@ export default () => {
     return (
         <div className={styles['lobby-wrapper']}>
             <div className={styles['lobby-content-box']}>
-                <h3 className={styles['header']}>Overlight Generals: Kings Alliance</h3>
+                <img alt='logo' src='/logo.png' className={`${styles['logo']}  ${styles['logo-left']}`}/>
+                <img alt='logo' src='/logo.png' className={`${styles['logo']}  ${styles['logo-right']}`}/>
+                <h3 className={styles['header']}>
+                    Overlight Generals <br/>
+                    <span className={styles['subtytle']}>Kings Alliance</span>
+                </h3>
                 <FormItem help='User Name'>
                     <div style={{display: 'flex'}}>
                         <Input

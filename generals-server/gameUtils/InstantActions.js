@@ -7,3 +7,7 @@ export const notifyNextStats = (roomId, stats) => io.to(roomId).emit('updateStat
 export const notifyLost = (socketId) => io.to(socketId).emit('loser')
 export const notifyGameEnd = (roomId) => io.to(roomId).emit('winner')
 export const notifyCooldownTic = (roomId) => io.to(roomId).emit('cooldownTic')
+
+export const notifySound_conquerCastle = (socketId) => io.to(socketId).emit('sound_ConquerCastle')
+export const notifySound_conquerCapitol = (socketId) => io.to(socketId).emit('sound_ConquerCapitol')
+export const notifySound_lostCapitol = (socketId) => io.to(socketId).emit('sound_LostCapitol')

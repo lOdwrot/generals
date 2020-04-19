@@ -42,7 +42,7 @@ const capitolAbilities = [
     {
         name: 'Ultra Defender',
         id: 'defender',
-        icon: getImageLink('/ability_defeder.jpg'),
+        icon: getImageLink('/logo.png'),
         type: 'instant',
         description: '',
         cost: 10,
@@ -90,6 +90,19 @@ const builidingAbilities = [
         maxCooldown: 300,
     },
 ]
+
+const passiveBonuses = [
+    {
+        name: 'Reveal Capitols',
+        id: 'revealCapitols',
+        icon: getImageLink('/ability_show_crown.PNG'),
+        type: 'instant',
+        description: 'Make all capitols on map visible',
+        cost: 9999,
+        from: 'capitol',
+        maxCooldown: 99999,
+    },
+] 
 
 export default () => {
     const board = useSelector(boardSelector)
