@@ -19,7 +19,7 @@ const WON_MUSIC = `${process.env.PUBLIC_URL}/won.mp3`
 
 export const playOpeningMusic = () => {
     setTimeout(() => playDialog(WELCOME_DIALOG), 1000)
-    setTimeout(() => playMusic(OPENING_MUSIC), 4500)
+    setTimeout(() => playMusic(OPENING_MUSIC), 5000)
 }
 export const playBattleStartMusic = () => playMusic(BATTLE_START_MUSIC)
 export const playCaptureCapitolSound = () => playDialog(CAPTURE_CAPITOL_SOUND)
@@ -71,7 +71,7 @@ export const playConquerCastle = () => playDialog(sample(CONQUER_CASTLE))
 
 var audio
 var dialogsAudio
-var volume = 0.5
+var volume = 0.0
 
 const playMusic = (audioPath) => {
     if(audio) audio.pause()
@@ -95,6 +95,6 @@ export const stopSounds = () => {
 export const setVolume = (level) => {
     volume = level
 
-    if(audio) audio.volume = volume
+    if(audio) audio.volume = (volume - 0.1)
     if(dialogsAudio) dialogsAudio.volume = volume
 }

@@ -19,6 +19,9 @@ export default ({
         if(selectedAbility === id) dispatch(setAbilitySelection(null))
         else !disabled && handleClick()
     }
+
+    const isDisabled = (cooldown || disabled)
+
     return (
         <Popover 
             title={name}
@@ -40,13 +43,13 @@ export default ({
                     style={{backgroundImage: icon}}
                     className={classnames(styles['ability-block'], {
                         [styles['selected-block']]: selectedAbility === id,
-                        [styles['clickable']]: !!cooldown
+                        [styles['clickable']]: !isDisabled
                     })}
                 >
                     <div
                         style={{boxShadow: true ? `inset 0 0px 3px ${Math.ceil(40*cooldown/maxCooldown)}px rgba(0, 0, 0, 0.8)` : 'none'}}
                         className={classnames(styles['filler-block'], {
-                            [styles['filler-block__disabled']]: !!cooldown
+                            [styles['filler-block__disabled']]: isDisabled
                         })}
                     />
                 </div>

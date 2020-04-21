@@ -44,6 +44,9 @@ export default () => {
         castleProduction,
         fieldProduction,
         turnDuration,
+        archeryTowersDensity,
+        observerTowersDensity,
+        abandonedFortressesDensity
     } = settings
 
     const handleChangeSetting = (settingName, value) => {
@@ -90,20 +93,6 @@ export default () => {
                         </FormItem>
                     </div>
                     <Divider>Game Rules</Divider>
-                        <FormItem help='Game Mode'>
-                            <Select
-                                disabled={!isHost}
-                                value={gameMode}
-                                onChange={(v) => handleChangeSetting('gameMode', v)}
-                            >
-                                {
-                                    AVAILABLE_GAME_MODES.map(v => <Option value={v.name} key={v.name}>{v.name}</Option>)
-                                }
-                                {
-                                    DISABLED_GAME_MODES.map(v => <Option value={v.name} key={v.name} disabled={true}>{v.name}</Option>)
-                                }
-                            </Select>
-                        </FormItem>
                         <FormItem help={`Duration Of Non-Aggression Pact: ${nonAggression}`}>
                             <Slider
                                 disabled={!isHost}
@@ -134,6 +123,36 @@ export default () => {
                                 step={0.1}
                                 value={mountainDensity}
                                 onChange={(v) => handleChangeSetting('mountainDensity', v)}
+                            />
+                        </FormItem>
+                        <FormItem help={`Abandoned Fortesses Density: ${abandonedFortressesDensity}`}>
+                            <Slider
+                                disabled={!isHost}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={abandonedFortressesDensity}
+                                onChange={(v) => handleChangeSetting('abandonedFortressesDensity', v)}
+                            />
+                        </FormItem>
+                        <FormItem help={`Observer Towers Density: ${observerTowersDensity}`}>
+                            <Slider
+                                disabled={!isHost}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={observerTowersDensity}
+                                onChange={(v) => handleChangeSetting('observerTowersDensity', v)}
+                            />
+                        </FormItem>
+                        <FormItem help={`Archery Towers Density: ${archeryTowersDensity}`}>
+                            <Slider
+                                disabled={!isHost}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={archeryTowersDensity}
+                                onChange={(v) => handleChangeSetting('archeryTowersDensity', v)}
                             />
                         </FormItem>
                     </div>

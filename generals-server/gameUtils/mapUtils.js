@@ -1,10 +1,13 @@
-import {random, sample} from 'lodash'
+import {random, sample, min} from 'lodash'
 
 export const generateMap = ({
-    width = 16, 
-    height = 16,
-    castles = 12,
-    mountains = 28,
+    width, 
+    height,
+    castles,
+    mountains,
+    archeryTowers,
+    observerTowers,
+    abondedFotresses,
     players = ['p1', 'p2']
 }) => {
     const QUARTERS = [
@@ -42,6 +45,28 @@ export const generateMap = ({
             random(quarter.yFrom, quarter.yTo)
         ]
     }
+
+    const quarterStructures = [
+        {index: 0, structures: 0},
+        {index: 1, structures: 0},
+        {index: 2, structures: 0},
+        {index: 3, structures: 0},
+    ]
+
+    const getQuarterIndexForBuilding = () => {
+        const minStructures = min(quarterStructures.map(v => v.structures))
+        const quarter = sample(quarterStructures.filter(v => v.structures === minStructures))
+        ++quarter.structures
+        return quarter.index
+    }
+    const generateCoordinatesForStructure = () => {
+        const quarter = getQuarterIndexForBuilding()
+        let [x, y] = generateCoordinates(quarter)
+        while (result[x][y].type != 'plain') {
+            [x, y] = generateCoordinates(quarter)
+        }
+        return [x, y]
+    }
     
     // generate map
     for(let y = 0; y < width; y++) {
@@ -57,13 +82,36 @@ export const generateMap = ({
         }
     }
 
-    // generate castles
+    // generate structures
+    for (let i = 0; i < archeryTowers; i++) {
+        const [x, y] = generateCoordinatesForStructure()
+        result[x][y] = ({
+            ...result[x][y],
+            type: 'archeryTower',
+            units: random(0,25) + 95
+        })
+    }
+
+    for (let i = 0; i < observerTowers; i++) {
+        const [x, y] = generateCoordinatesForStructure()
+        result[x][y] = ({
+            ...result[x][y],
+            type: 'observerTower',
+            units: random(0,25) + 95
+        })
+    }
+
+    for (let i = 0; i < abondedFotresses; i++) {
+        const [x, y] = generateCoordinatesForStructure()
+        result[x][y] = ({
+            ...result[x][y],
+            type: 'abandonedFortress',
+            units: 250
+        })
+    }
+
     for (let i = 0; i < castles; i++) {
-        const [x, y] = generateCoordinates(i)
-        if(result[x][y].type != 'plain') {
-            i--
-            continue
-        }
+        const [x, y] = generateCoordinatesForStructure()
         result[x][y] = ({
             ...result[x][y],
             type: 'castle',

@@ -10,9 +10,12 @@ const INITIAL_STATE = ({
         nonAggression: 50,
         castlesDensity: 0.5,
         mountainDensity: 0.5,
+        archeryTowersDensity: 0.3,
+        observerTowersDensity: 0.3,
+        abandonedFortressesDensity: 0.3,
         castleProduction: 1,
         fieldProduction: 25,
-        turnDuration: 1000
+        turnDuration: 1000,
     }
 })
 

@@ -22,7 +22,10 @@ function App() {
   return (
     <div>
       <AudioControl/>
-      <Abilities/>
+      {
+        playerRole === 'fighter' &&
+        <Abilities/>
+      }
       <GameInfo/>
       <LiveChat/>
       {

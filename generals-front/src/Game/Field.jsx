@@ -85,11 +85,15 @@ export default React.memo(({
 function getImageLink(type, isVisible) {
     let imagePath = '';
     isVisible = isVisible || window.debug
-    if(!isVisible && (type === 'castle' || type === 'mountain')) imagePath = '/obstacle.png'
+    if (type === 'plain' || (!isVisible && type === 'capitol')) return 'unset'
+    else if(!isVisible && type !== 'capitol') imagePath = '/obstacle.png'
     else if(type === 'castle') imagePath = '/city.png'
     else if(type === 'mountain') imagePath = '/mountain.png'
-    else if(isVisible && type === 'capitol') imagePath = '/crown.png'
-    else if(isVisible && type === 'defendedCapitol') imagePath = '/defendedCrown.png'
+    else if(type === 'capitol') imagePath = '/crown.png'
+    else if(type === 'defendedCapitol') imagePath = '/defendedCrown.png'
+    else if(type === 'archeryTower') imagePath = '/archery_tower.png'
+    else if(type === 'observerTower') imagePath = '/observer_tower.png'
+    else if(type === 'abandonedFortress') imagePath = '/tower5G.png'
 
     return `url(${process.env.PUBLIC_URL + imagePath})`
 }

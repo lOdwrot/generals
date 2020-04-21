@@ -66,28 +66,35 @@ const builidingAbilities = [
     {
         name: 'Scan Area',
         id: 'scan',
+        type: 'select',
         icon: getImageLink('/ability_observer.png'),
         description: '',
         cost: 100,
         from: 'observation tower',
+        fromFieldName: 'observerTower',
         maxCooldown: 100,
-    },
-    {
-        name: 'Autumn Of The Middle Ages',
-        id: 'autumn',
-        icon: getImageLink('/ability_autumn.png'),
-        description: 'Release a devastating plague that destroy almost everyone across across all kingdoms. On every field only one warrior will remain (buildings and capitols will be affected as well).',
-        cost: 300,
-        from: 'abondoned fortress',
-        maxCooldown: 1000,
     },
     {
         name: 'Archery Tower',
         id: 'archery tower',
+        type: 'select',
         icon: getImageLink('/ability_archery.png'),
         description: '',
         cost: 250,
+        from: 'observation tower',
+        fromFieldName: 'archeryTower',
         maxCooldown: 300,
+    },
+    {
+        name: 'Autumn Of The Middle Ages',
+        id: 'autumn',
+        type: 'select',
+        icon: getImageLink('/ability_autumn.png'),
+        description: 'Release a devastating plague that destroy almost everyone across all kingdoms.',
+        cost: 1000,
+        from: 'abondoned fortress',
+        fromFieldName: 'abandonedFortress',
+        maxCooldown: 1000,
     },
 ]
 
@@ -112,11 +119,14 @@ export default () => {
     const cooldowns = useSelector(cooldownsSelector)
     const dispatch = useDispatch()
 
-    const isPlayerDead = !userStats[user.socketId]?.units
-    const capitolField = board.flat().find(({type, owner}) => (type === 'capitol' || type === 'defendedCapitol') && owner === user.socketId)
-
+    const playerStats = userStats[user.socketId]
+    if (!playerStats) return null
+    const isPlayerDead = !playerStats.units
     const handleSetAbilitySelectionMode = (ability) => dispatch(setAbilitySelection(ability)) 
-    
+    const capitol = playerStats.ownedSpecialFields.find(v => v.type === 'capitol' || v.type === 'defendedCapitol')
+
+    console.log('All', playerStats, builidingAbilities )
+    console.log(builidingAbilities.filter(v => playerStats[v.fromFieldName]))
     return (
         <div className={styles['ability-panel']}>
             {
@@ -130,18 +140,37 @@ export default () => {
                 />
             }
             {
+                !isPlayerDead &&
                 capitolAbilities.map(v => (
                     <Ability
+                        key={v.id}
                         handleClick={() => {
                             if(v.type === 'select') handleSetAbilitySelectionMode(v.id)
                             if(v.type === 'instant') executeInstantCommand(v.id)
                         }}
-                        disabled={false}
+                        disabled={capitol.units <= v.cost}
                         ability={v}
                         selectedAbility={selectedAbility}
                         cooldown={cooldowns[v.id]}
                     />
                 ))
+            }
+            {
+                builidingAbilities
+                    .filter(v => playerStats[v.fromFieldName])
+                    .map(v => (
+                        <Ability
+                            key={v.id}
+                            handleClick={() => {
+                                if(v.type === 'select') handleSetAbilitySelectionMode(v.id)
+                                if(v.type === 'instant') executeInstantCommand(v.id)
+                            }}
+                            disabled={!playerStats.ownedSpecialFields.some(field => field.type === v.fromFieldName && field.units > v.cost)}
+                            ability={v}
+                            selectedAbility={selectedAbility}
+                            cooldown={cooldowns[v.id]}
+                        />
+                    ))
             }
         </div>
     )

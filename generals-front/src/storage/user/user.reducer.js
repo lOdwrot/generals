@@ -2,7 +2,7 @@ import * as actions from './user.action'
 import { SET_PLAYERS } from '../game/game.action'
 
 const INITIAL_STATE = {
-    userName: 'p1',
+    userName: 'King',
     socketId: '',
     roomId: ''
 }

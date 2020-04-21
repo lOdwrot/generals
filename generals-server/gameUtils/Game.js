@@ -25,13 +25,15 @@ export class Game {
         const {
             mapWidth,
             mapHeight,
-            gameMode,
             nonAggression,
             castlesDensity,
             mountainDensity,
             castleProduction,
             fieldProduction,
             turnDuration,
+            archeryTowersDensity,
+            observerTowersDensity,
+            abandonedFortressesDensity
         } = settings
 
         this.tourCounter = 0
@@ -54,7 +56,10 @@ export class Game {
             width: mapHeight, 
             height: mapWidth,
             castles: (mapWidth + mapHeight) * 0.75 * castlesDensity,
-            mountains: (mapWidth * mapHeight) * 0.2 * mountainDensity,
+            archeryTowers: (mapWidth + mapHeight) * 0.2 * archeryTowersDensity,
+            observerTowers: (mapWidth + mapHeight) * 0.2 * observerTowersDensity,
+            abondedFotresses: (mapWidth + mapHeight) * 0.05 * abandonedFortressesDensity,
+            mountains: (mapWidth * mapHeight) * 0.22 * mountainDensity,
             players: players.map(v => v.socketId)
         }),
         this.moves = players.reduce((acc, user) => ({
@@ -100,18 +105,17 @@ export class Game {
         
         this.refreshStats()
         
+        // const remainingTeamIds = uniq(
+        //     this.players
+        //         .filter(v => this.usersStats[v.socketId].units > 0)
+        //         .map(v => v.teamId)
+        // )
 
-        const remainingTeamIds = uniq(
-            this.players
-                .filter(v => nextUserStats[v.socketId].units > 0)
-                .map(v => v.teamId)
-        )
-
-        if (remainingTeamIds.length === 1) {
-            console.log('Game Over!')
-            this.isGameOver = true
-            notifyGameEnd(this.roomId)
-        }
+        // if (remainingTeamIds.length === 1) {
+        //     console.log('Game Over!')
+        //     this.isGameOver = true
+        //     notifyGameEnd(this.roomId)
+        // }
     }
 
     refreshStats() {
@@ -136,21 +140,28 @@ export class Game {
             [v.socketId]: {
                 units: 0,
                 lands: 0,
-                castles: 0
+                castle: 0,
+                archeryTower: 0,
+                observerTower: 0,
+                abandonedFortress: 0,
+                ownedSpecialFields: []
             }
         }), {})
 
         flatten(this.board)
-            .forEach(({owner, units, type}) => {
+            .forEach((field) => {
+                const {owner, units, type} = field
                 if (owner == 'n') return
                 const stats = userStats[owner]
                 stats.units += units
                 stats.lands++
-                if (type === 'castle' || isCapitol(type)) {
-                    stats.castles++ 
-                }
+                if (type === 'plain') return
+                if (type === 'castle' || isCapitol(type)) stats.castle++ 
+                if(type === 'archeryTower') stats.archeryTower++
+                if(type === 'observerTower') stats.observerTower++
+                if(type === 'abandonedFortress') stats.abandonedFortress++
+                stats.ownedSpecialFields.push(field)
             })
-
         return userStats
     }
 

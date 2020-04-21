@@ -16,6 +16,7 @@
 }
 
 .chat-header {
+    user-select: none;
     border: solid 1px grey;
     text-align: center;
     border-radius: 3px;

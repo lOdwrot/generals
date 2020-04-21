@@ -1,4 +1,5 @@
 .ability-panel {
+    user-select: none;
     z-index: 999;
     position: fixed;
     left: 0;
@@ -33,11 +34,14 @@
 }
 
 .ability-description-box {
-    width: 350px;
+    width: 400px;
+    user-select: none;
 }
 
 .selected-block {
-    border: solid 3px red !important;
+    border: solid 5px gold !important;
+    padding: 1px;
+    border-radius: 15px;
 }
 
 .clickable {

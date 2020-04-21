@@ -28,9 +28,6 @@ export default () => {
 
     return (
         <div className={styles['info-panel']}>
-            <div>
-                {user.socketId}
-            </div>
             <div className={classnames(styles['grid-container'])}>
                 <div/>
                 <div>
