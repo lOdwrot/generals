@@ -42,7 +42,7 @@ export const playRebornDialog = () => playDialog(REBORN_DIALOG)
 
 const PLOWING_FIELD1 = `${process.env.PUBLIC_URL}/dialogs/PlowingField1.wav`
 const PLOWING_FIELD2 = `${process.env.PUBLIC_URL}/dialogs/PlowingField2.wav`
-export const playPlowingFieldConfirmation = () => playDialog(sample([PLOWING_FIELD1, PLOWING_FIELD2]))
+export const playPlowingFieldConfirmation = () => playDialog(sample([PLOWING_FIELD1]))
 
 const MOVE_CAPITOL = `${process.env.PUBLIC_URL}/dialogs/MoveCapitol.wav`
 export const playMoveCapitolConfirmation = () => playDialog(MOVE_CAPITOL)
@@ -94,10 +94,10 @@ const CROWN_FINDER = `${process.env.PUBLIC_URL}/dialogs/FindCapitol.wav`
 export const playCrownFinder = () => playDialog(CROWN_FINDER)
 
 const ARCHERY_SHOOTED = [
-    `${process.env.PUBLIC_URL}/dialogs/ArchShooted1.wav`,
-    `${process.env.PUBLIC_URL}/dialogs/ArchShooted2.wav`,
+    // `${process.env.PUBLIC_URL}/dialogs/ArchShooted1.wav`,
+    // `${process.env.PUBLIC_URL}/dialogs/ArchShooted2.wav`,
     `${process.env.PUBLIC_URL}/dialogs/ArchShooted3.wav`,
-    `${process.env.PUBLIC_URL}/dialogs/ArchShooted4.wav`,
+    // `${process.env.PUBLIC_URL}/dialogs/ArchShooted4.wav`,
 ]
 export const playArcheryShooted = () => playDialog(sample(ARCHERY_SHOOTED))
 

@@ -7,10 +7,16 @@
     padding-bottom: 5px;
 }
 
-.room-name {
+.room-header {
     color: white;
     font-size: 18px;
     font-weight: 600;
+}
+
+.room-name {
+    
+    font-family: MedievalSharp;
+    font-weight: 400;
 }
 
 .players-block {

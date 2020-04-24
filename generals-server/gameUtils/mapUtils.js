@@ -8,7 +8,7 @@ export const generateMap = ({
     archeryTowers,
     observerTowers,
     abondedFotresses,
-    players = ['p1', 'p2']
+    players
 }) => {
     const QUARTERS = [
         {
@@ -88,7 +88,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'archeryTower',
-            units: random(0,25) + 0
+            units: random(0,25) + 80
         })
     }
 
@@ -97,7 +97,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'observerTower',
-            units: random(0,25) + 0
+            units: random(0,25) + 80
         })
     }
 
@@ -106,7 +106,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'abandonedFortress',
-            units: 25
+            units: 250
         })
     }
 

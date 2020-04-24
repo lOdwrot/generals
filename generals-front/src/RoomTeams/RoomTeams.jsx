@@ -35,7 +35,7 @@ export default () => {
 
     return (
         <>  
-            <div className={styles['room-name']}>Room: {user.roomId}</div>
+            <div className={styles['room-header']}>Room: {user.roomId}</div>
             <div className={styles['rooms-wrapper']}>
                 {
                     players.map((v, index) => (

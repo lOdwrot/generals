@@ -27,9 +27,11 @@ export default () => {
                     value={vloumeLevel}
                 />
             </div>
-            <div>
-                <Button onClick={() => ap.playBattleMusic2()}>playBattleMusic2</Button>
-            </div>
+            {/* <div>
+                <Button onClick={() => ap.playArcheriesReady()}>playBattleMusic2</Button>
+                <Button onClick={() => ap.playPlowingFieldConfirmation()}>playPlowingFieldConfirmation</Button>
+                <Button onClick={() => ap.playCrownFinder()}>playCrownFinder</Button>
+            </div> */}
         </div>
     )
 }
