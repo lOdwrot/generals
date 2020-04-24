@@ -1,4 +1,6 @@
 import {sample} from 'lodash'
+import store from '../storage/store'
+import { playerRoleSelector } from '../storage/game/game.selector'
 
 const BATTLE_START_MUSIC =  `${process.env.PUBLIC_URL}/battleStart1.mp3`
 const OPENING_MUSIC =  `${process.env.PUBLIC_URL}/open.mp3`
@@ -16,16 +18,20 @@ const BATTLE_MUSIC = `${process.env.PUBLIC_URL}/battleMusic.mp3`
 const LOST_MUSIC = `${process.env.PUBLIC_URL}/lost.mp3`
 const WON_MUSIC = `${process.env.PUBLIC_URL}/won.mp3`
 
-
+export const playStartMusic = () => playMusic(OPENING_MUSIC)
+export const playStartDialog = () => playDialog(WELCOME_DIALOG)
 export const playOpeningMusic = () => {
-    setTimeout(() => playDialog(WELCOME_DIALOG), 1000)
-    setTimeout(() => playMusic(OPENING_MUSIC), 5000)
+    setTimeout(playStartDialog, 1000)
+    setTimeout(playStartMusic, 5000)
 }
 export const playBattleStartMusic = () => playMusic(BATTLE_START_MUSIC)
 export const playCaptureCapitolSound = () => playDialog(CAPTURE_CAPITOL_SOUND)
 
 export const playPeacfullBackgoundMusic = () => playMusic(sample(PEACFULL_BACKGROUNDS))
 export const playBattleMusic = () => playMusic(BATTLE_MUSIC)
+
+const BATTLE_MUSIC2 = `${process.env.PUBLIC_URL}/battleMusic2.mp3`
+export const playBattleMusic2 = () => playMusic(BATTLE_MUSIC2)
 
 export const playLostMusic = () => playMusic(LOST_MUSIC)
 export const playWinMusic = () => playMusic(WON_MUSIC)
@@ -98,27 +104,36 @@ export const playArcheryShooted = () => playDialog(sample(ARCHERY_SHOOTED))
 var audio
 var dialogsAudio
 var dialogsAudio2
-var volume = 0.2
+var volume = 0.5
 
 const playMusic = (audioPath) => {
-    if(audio) audio.pause()
-    audio = new Audio(audioPath)
+    if(!audio) {
+        audio = new Audio()
+        audio.onended = () => playerRoleSelector(store.getState()) === 'fighter' && playBattleMusic2()
+    }
+    audio.pause()
+    audio.src = audioPath
+    audio.load()
     audio.volume = volume
     audio.play()
 }
 
 const playDialog = (audioPath) => {
     console.log('Playing: ', audioPath)
-    if(dialogsAudio) dialogsAudio.pause()
-    dialogsAudio = new Audio(audioPath)
+    if(!dialogsAudio) dialogsAudio = new Audio()
+    dialogsAudio.pause()
+    dialogsAudio.src = audioPath
+    dialogsAudio.load()
     dialogsAudio.volume = volume
     dialogsAudio.play()
 }
 
 const playDialog2 = (audioPath) => {
-    console.log('Playing: ', audioPath)
-    if(dialogsAudio2) dialogsAudio2.pause()
-    dialogsAudio2 = new Audio(audioPath)
+    console.log('Playing2: ', audioPath)
+    if(!dialogsAudio2) dialogsAudio2 = new Audio()
+    dialogsAudio2.pause()
+    dialogsAudio2.src = audioPath
+    dialogsAudio2.load()
     dialogsAudio2.volume = volume
     dialogsAudio2.play()
 }

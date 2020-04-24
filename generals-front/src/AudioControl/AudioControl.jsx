@@ -27,6 +27,9 @@ export default () => {
                     value={vloumeLevel}
                 />
             </div>
+            <div>
+                <Button onClick={() => ap.playBattleMusic2()}>playBattleMusic2</Button>
+            </div>
         </div>
     )
 }

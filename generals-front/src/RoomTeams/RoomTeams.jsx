@@ -6,6 +6,29 @@ import { Button } from 'antd'
 import { userSelector } from '../storage/user/user.selector'
 import { changeTeam } from '../socket/socketManager'
 
+const TEAM_NAMES = [
+    'Kings',
+    'Knights',
+    'Rulers',
+    'Hussars',
+    'Monarchs',
+    'Warriors',
+    'Heroes',
+    'Spartans',
+    'Franks',
+    'Kings4',
+    'Kings5',
+    'Kings6',
+    'Kings7',
+    'Kings8',
+    'Kings9',
+    'Kings10',
+    'Kings11',
+    'Kings12',
+    'Kings13',
+    'Kings13',
+]
+
 export default () => {
     const players = useSelector(playersSelector)
     const user = useSelector(userSelector)
@@ -17,7 +40,7 @@ export default () => {
                 {
                     players.map((v, index) => (
                         <div key={index}>
-                            <div className={styles['room-name']}>Team {index}</div>
+                            <div className={styles['room-name']}>Team {TEAM_NAMES[index]}</div>
                             <div>
                                 <div className={styles['players-block']}>
                                     {

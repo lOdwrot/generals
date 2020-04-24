@@ -34,7 +34,7 @@ export default ({
                         <div>{`Cost: ${cost} units from ${from}`}</div>
                         {
                             !isPassive &&
-                            <div>Cooldown: {cooldown}/{maxCooldown}</div>
+                            <div>Cooldown: {cooldown || '0'}/{maxCooldown}</div>
                         }
                         {
                             isPassive &&

@@ -74,6 +74,7 @@ io.on('connection', (socket) => {
 
     socket.on('changeTeam', nextTeamId => {
         const user = users[socket.id]
+        if(!user) return
         user.teamId = nextTeamId
         refreshPlayersInRoom(user.roomId)
     })
