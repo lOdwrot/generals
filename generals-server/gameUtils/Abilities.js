@@ -1,39 +1,39 @@
 export const abilities =  {
     reborn: {
-        cost: 5,
-        cooldown: 10,
+        cost: 100,
+        cooldown: 500,
     },
     unite: {
-        cost: 5,
-        cooldown: 10,
+        cost: 0,
+        cooldown: 500,
     },
     moveCapitol: {
-        cost: 5,
-        cooldown: 10,
+        cost: 250,
+        cooldown: 250,
     },
     defender: {
-        cost: 5,
-        cooldown: 10,
+        cost: 50,
+        cooldown: 10000,
         duaration: 50
     },
     plowingField: {
-        cost: 5,
-        cooldown: 10,
+        cost: 250,
+        cooldown: 250,
     },
     scan: {
-        cost: 5,
-        cooldown: 10,
-    },
-    autumn: {
-        cost: 5,
-        cooldown: 10,
+        cost: 150,
+        cooldown: 100,
     },
     archeryFire: {
-        cost: 5,
-        cooldown: 10,
+        cost: 600,
+        cooldown: 400,
+    },
+    autumn: {
+        cost: 1500,
+        cooldown: 2500,
     },
     revealCapitols: {
-        cost: 5,
-        cooldown: 10,
+        cost: 3000,
+        cooldown: 1,
     },
 }

@@ -15,9 +15,9 @@ const abilityReborn = {
     type: 'select',
     icon: getImageLink('/ability_reborn.jpg'),
     description: 'Reborn in on of ally\'s castle. Click on ability and select (by right click) a castle with minimum 100 units to reborn there.',
-    cost: 25,
+    cost: 100,
     from: 'ally castle',
-    maxCooldown: 25,
+    maxCooldown: 500,
 }
 
 const capitolAbilities = [
@@ -27,9 +27,9 @@ const capitolAbilities = [
         icon: getImageLink('/ability_uniteArmy.png'),
         type: 'instant',
         description: 'Gather all units from whole kingdom in your capitol immediately.',
-        cost: 25,
+        cost: 0,
         from: 'capitol',
-        maxCooldown: 25,
+        maxCooldown: 500,
     },
     {
         name: 'Move Capitol',
@@ -37,9 +37,9 @@ const capitolAbilities = [
         icon: getImageLink('/ability_moveCapitol.jpg'),
         type: 'select',
         description: 'Select owned castle to your new capitol. Select ability and right click on selected castle.',
-        cost: 25,
+        cost: 250,
         from: 'capitol',
-        maxCooldown: 25,
+        maxCooldown: 250,
     },
     {
         name: 'Ultra Defender',
@@ -47,9 +47,9 @@ const capitolAbilities = [
         icon: getImageLink('/logo.png'),
         type: 'instant',
         description: 'Units inside you capitol fight with double power for short period',
-        cost: 25,
+        cost: 50,
         from: 'capitol',
-        maxCooldown: 25,
+        maxCooldown: 10000,
     },
     {
         name: 'Plowing The Field',
@@ -57,9 +57,45 @@ const capitolAbilities = [
         type: 'select',
         icon: getImageLink('/ability_plowingField.png'),
         description: 'Clear one of controlled fields from your units to hide from enemies.',
-        cost: 25,
+        cost: 250,
         from: 'capitol',
-        maxCooldown: 25,
+        maxCooldown: 250,
+    },
+]
+
+const builidingAbilities = [
+    {
+        name: 'Scan Area',
+        id: 'scan',
+        type: 'select',
+        icon: getImageLink('/ability_observer.png'),
+        description: 'Scan area you can not reach. Selected fields (by right click) will be visible even if you have no units in this area.',
+        cost: 150,
+        from: 'observation tower',
+        fromFieldName: 'observerTower',
+        maxCooldown: 100,
+    },
+    {
+        name: 'Longrange Archery Fire',
+        id: 'archeryFire',
+        type: 'select',
+        icon: getImageLink('/ability_archery.png'),
+        description: 'Select (by right click) one of visible fields and order archeries longrange fire. Damage 60% of units on empty areas and 20% in buildings',
+        cost: 600,
+        from: 'archery tower',
+        fromFieldName: 'archeryTower',
+        maxCooldown: 400,
+    },
+    {
+        name: 'Autumn Of The Middle Ages',
+        id: 'autumn',
+        type: 'instant',
+        icon: getImageLink('/ability_autumn.png'),
+        description: 'Cause a tragedy across all kingdoms. After tragedy only one unit on every standard field will remain.',
+        cost: 1500,
+        from: 'abondoned fortress',
+        fromFieldName: 'abandonedFortress',
+        maxCooldown: 2500,
     },
 ]
 
@@ -70,47 +106,10 @@ const passiveAbilities = [
         type: 'instant',
         icon: getImageLink('/ability_show_crown.PNG'),
         description: 'Make all capitols visible on map (only you can see it).',
-        cost: 25,
+        cost: 3000,
         from: 'capitol',
-        maxCooldown: 25,
+        maxCooldown: 1,
     }
-]
-
-const builidingAbilities = [
-    
-    {
-        name: 'Scan Area',
-        id: 'scan',
-        type: 'select',
-        icon: getImageLink('/ability_observer.png'),
-        description: 'Scan area you can not reach. Selected fields (by right click) will be visible even if you have no units in this area.',
-        cost: 25,
-        from: 'observation tower',
-        fromFieldName: 'observerTower',
-        maxCooldown: 25,
-    },
-    {
-        name: 'Longrange Archery Fire',
-        id: 'archeryFire',
-        type: 'select',
-        icon: getImageLink('/ability_archery.png'),
-        description: 'Select one of visible fields and order archeries longrange fire. Damage 50% of units on empty areas and 20% in buildings',
-        cost: 25,
-        from: 'archery tower',
-        fromFieldName: 'archeryTower',
-        maxCooldown: 25,
-    },
-    {
-        name: 'Autumn Of The Middle Ages',
-        id: 'autumn',
-        type: 'instant',
-        icon: getImageLink('/ability_autumn.png'),
-        description: 'Cause a tragedy across all kingdoms. After tragedy only one unit on every standard field will remain.',
-        cost: 25,
-        from: 'abondoned fortress',
-        fromFieldName: 'abandonedFortress',
-        maxCooldown: 25,
-    },
 ]
 
 

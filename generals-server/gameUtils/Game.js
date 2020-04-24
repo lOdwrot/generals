@@ -377,7 +377,7 @@ export class Game {
             .filter(v => v && v.units)
             .forEach(v => {
                 v.units = Math.ceil(v.type === 'plain'
-                    ? 0.5 * v.units
+                    ? 0.4 * v.units
                     : 0.8 * v.units 
                 )
             })
