@@ -2,12 +2,12 @@ import socketIO from 'socket.io-client'
 import config from '../config'
 import store from '../storage/store'
 import { setUser } from '../storage/user/user.action'
-import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands, setAbilitySelection, setCooldown, cooldownTic } from '../storage/game/game.action'
+import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands, setAbilitySelection, setCooldown, cooldownTic, addAbilityVisibleFields, addPassiveAbility } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
-import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol } from '../audioPlayer/audioPlayer'
+import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol, playArcheryShooted, playAutumn, playAutumnEffect } from '../audioPlayer/audioPlayer'
 import { eraseHistory, setUserColorsInHistory } from '../storage/history/history.action'
-import { playersSelector } from '../storage/game/game.selector'
+import { playersSelector, passiveAbilitiesSelector } from '../storage/game/game.selector'
 
 const io = socketIO(config.address)
 
@@ -47,7 +47,7 @@ io.on('endOfPeace', () => playBattleMusic())
 io.on('updateBoard', board => {
     const teamId = store.getState().user.teamId
     const playerIdToTeamId = store.getState().game.playerIdToTeamId
-    
+
     board
         .flat()
         .filter(v => playerIdToTeamId[v.owner] === teamId)
@@ -64,17 +64,30 @@ io.on('removeCommands', commandIds => store.dispatch(removeCommands(commandIds))
 io.on('setCooldown', (cooldownName, value) => {
     store.dispatch(setCooldown(cooldownName, value))
     if (cooldownName === 'reborn') playRebornDialog()
-    if (cooldownName === 'moveCapitol') playMoveCapitolConfirmation()
-    if (cooldownName === 'plowingField') playPlowingFieldConfirmation()
     if (cooldownName === 'unite') playUniteArmyConfirmation()
     if (cooldownName === 'defender') playDefenderConfirmation()
+    if (cooldownName === 'autumn') playAutumnEffect()
+    if (cooldownName === 'revealCapitols') {
+        store.dispatch(addPassiveAbility('revealCapitols'))
+    }
 })
 io.on('cooldownTic', () => store.dispatch(cooldownTic()))
+io.on('confirmScan', ({x, y}) => {
+    const fields = []
+    for (let iX = x - 1; iX <= x + 1; iX++) {
+        for (let iY = y - 1; iY <= y + 1; iY++) {
+            fields.push({x: iX, y: iY})
+        }
+    }
+    store.dispatch(addAbilityVisibleFields(fields))
+})
 
 // SOUND_NOTYFICATIONS
 io.on('sound_ConquerCastle', playConquerCastle)
 io.on('sound_ConquerCapitol', playConquerCapitol)
 io.on('sound_LostCapitol', playLostCapitol)
+io.on('sound_archeryShooted', playArcheryShooted)
+io.on('sound_autumn', playAutumnEffect)
 
 // CHAT
 export const sendMessage = (message) => io.emit('sendMessage', message)

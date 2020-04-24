@@ -1,7 +1,7 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
 import {flatten, uniq} from 'lodash'
-import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle } from "./InstantActions"
+import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle, notifySound_archeryShooted, notifySound_autumn, notifySound_conquerCapitol, notifySound_lostCapitol } from "./InstantActions"
 import { abilities } from './Abilities'
 
 const isCapitol = (type) => type === 'capitol' || type === 'defendedCapitol'
@@ -105,17 +105,17 @@ export class Game {
         
         this.refreshStats()
         
-        // const remainingTeamIds = uniq(
-        //     this.players
-        //         .filter(v => this.usersStats[v.socketId].units > 0)
-        //         .map(v => v.teamId)
-        // )
+        const remainingTeamIds = uniq(
+            this.players
+                .filter(v => this.usersStats[v.socketId].units > 0)
+                .map(v => v.teamId)
+        )
 
-        // if (remainingTeamIds.length === 1) {
-        //     console.log('Game Over!')
-        //     this.isGameOver = true
-        //     notifyGameEnd(this.roomId)
-        // }
+        if (remainingTeamIds.length === 1) {
+            console.log('Game Over!')
+            this.isGameOver = true
+            notifyGameEnd(this.roomId)
+        }
     }
 
     refreshStats() {
@@ -229,7 +229,10 @@ export class Game {
     conquerPlayer(agressorId, victimId, capitolField) {
         flatten(this.board)
             .filter(v => v.owner === victimId)
-            .forEach(v => v.owner = agressorId)
+            .forEach(v => {
+                v.owner = agressorId
+                v.units = Math.ceil(v.units / 2)
+            })
 
         notifySound_conquerCapitol(agressorId)
         notifySound_lostCapitol(victimId)
@@ -266,7 +269,7 @@ export class Game {
                                 .filter(v => !commandIds.includes(v.id))
     }
 
-    getBoardField = ({x, y}) => this.board[y][x]
+    getBoardField = ({x, y}) => this.board[y] && this.board[y][x]
     getCurrentPlayerCapitol = (playerId) => flatten(this.board).find(v => isCapitol(v.type) && v.owner === playerId)
     // Instant Actions
     reborn(playerId, coordinates) {
@@ -347,6 +350,82 @@ export class Game {
         this.activeDefenders.push({playerId, duaration})
         return true
     }
+
+    // sepcial buildings
+    getSpecialField(playerId, buildingType, cost) {
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId) 
+        if(!currentCapitol) return console.log('No capitol for player')
+        const fields = this.usersStats[playerId].ownedSpecialFields.filter(v => v.type === buildingType && v.units >= cost)
+        if (!fields[0]) return console.log(`No required fields with enough quantity of units | ${buildingType} ${cost}`)
+        fields[0].units -= cost
+        return fields[0]
+    }
+
+    archeryFire(playerId, coordinates) {
+        const {cost} = abilities.archeryFire
+        if(!this.getSpecialField(playerId, 'archeryTower', cost)) return
+
+        const {x, y} = coordinates
+        const affectedFields = []
+        for (let iX = (x - 1); iX <= (x + 1);  iX++) {
+            for (let iY = (y - 1); iY <= (y + 1);  iY++) {
+                affectedFields.push(this.getBoardField({x: iX, y: iY}))
+            }
+        }
+
+        affectedFields
+            .filter(v => v && v.units)
+            .forEach(v => {
+                v.units = Math.ceil(v.type === 'plain'
+                    ? 0.5 * v.units
+                    : 0.8 * v.units 
+                )
+            })
+
+        uniq(
+            affectedFields
+                .map(v => v.owner)
+                .filter(v => v != 'n')
+        ).forEach(v => notifySound_archeryShooted(v))
+
+        return true
+    }
+
+    scanArea(playerId, coordinates) {
+        const {cost} = abilities.scan
+        if(!this.getSpecialField(playerId, 'observerTower', cost)) return
+        return true
+    }
+
+    revealCapitols(playerId) {
+        const {cost} = abilities.revealCapitols
+        const currentCapitol = this.getCurrentPlayerCapitol(playerId) 
+        if(!currentCapitol) return console.log('No capitol for player')
+        if(currentCapitol.units < cost) return console.log('Not enough units')
+
+        currentCapitol.units -= cost
+        return true
+    }
+
+    autumn(playerId) {
+        const {cost} = abilities.scan
+        if(!this.getSpecialField(playerId, 'abandonedFortress', cost)) return
+        flatten(this.board)
+            .forEach((field) => {
+                const {type} = field
+                if(field.owner === 'n') return
+                if (type != 'plain' && type != 'capitol' && type != 'defendedCapitol') {
+                    field.owner = 'n'
+                    field.units = 10
+                } else {
+                    field.units = 1
+                }
+            })
+
+        notifySound_autumn(this.roomId)
+        return true
+    }
+    
 
     recalculateDefenders() {
         this.activeDefenders.forEach((v) => {

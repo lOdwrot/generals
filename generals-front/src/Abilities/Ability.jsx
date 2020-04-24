@@ -11,6 +11,8 @@ export default ({
     disabled=false,
     selectedAbility,
     cooldown,
+    isPassive,
+    isOwned
 }) => {
     const dispatch = useDispatch()
     const { name, description, icon, id, maxCooldown, cost, from} = ability
@@ -30,7 +32,14 @@ export default ({
                 <div className={styles['ability-description-box']}>
                     <div className={styles['popover-stats']}>
                         <div>{`Cost: ${cost} units from ${from}`}</div>
-                        <div>Cooldown: {cooldown}/{maxCooldown}</div>
+                        {
+                            !isPassive &&
+                            <div>Cooldown: {cooldown}/{maxCooldown}</div>
+                        }
+                        {
+                            isPassive &&
+                            <div>Passive Ability</div>
+                        }
                     </div>
                     {description}
                     
@@ -43,13 +52,13 @@ export default ({
                     style={{backgroundImage: icon}}
                     className={classnames(styles['ability-block'], {
                         [styles['selected-block']]: selectedAbility === id,
-                        [styles['clickable']]: !isDisabled
+                        [styles['clickable']]: !isOwned && !isDisabled
                     })}
                 >
                     <div
-                        style={{boxShadow: true ? `inset 0 0px 3px ${Math.ceil(40*cooldown/maxCooldown)}px rgba(0, 0, 0, 0.8)` : 'none'}}
+                        style={{boxShadow: !isOwned ? `inset 0 0px 3px ${Math.ceil(40*cooldown/maxCooldown)}px rgba(0, 0, 0, 0.8)` : 'inset 0 0px 3px 40px rgba(255, 223, 0, 0.35'}}
                         className={classnames(styles['filler-block'], {
-                            [styles['filler-block__disabled']]: isDisabled
+                            [styles['filler-block__disabled']]: !isOwned && isDisabled
                         })}
                     />
                 </div>

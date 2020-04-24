@@ -3,6 +3,7 @@ import styles from './AudioControl.module.scss'
 import { Button, Slider } from 'antd'
 import { SoundOutlined } from '@ant-design/icons'
 import { setVolume } from '../audioPlayer/audioPlayer'
+import * as ap from '../audioPlayer/audioPlayer'
 
 export default () => {
     const [vloumeLevel, setVloumeLevel] = useState(50)

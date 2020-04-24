@@ -69,9 +69,36 @@ const CONQUER_CASTLE = [
 ]
 export const playConquerCastle = () => playDialog(sample(CONQUER_CASTLE))
 
+const ARCHERY_SELECT = [
+    `${process.env.PUBLIC_URL}/dialogs/ArchPrepare1.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/ArchPrepare2.wav`,
+]
+export const playArcheriesReady = () => playDialog2(sample(ARCHERY_SELECT))
+
+const AUTUMN_SELECT = [
+    `${process.env.PUBLIC_URL}/dialogs/5gSelect.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/5gSelect2.wav`
+]
+export const playAutumnSelect = () => playDialog2(sample(AUTUMN_SELECT))
+
+const AUTUMN_EFFECT = `${process.env.PUBLIC_URL}/dialogs/5gEffect.mp3`
+export const playAutumnEffect = () => playDialog(AUTUMN_EFFECT)
+
+const CROWN_FINDER = `${process.env.PUBLIC_URL}/dialogs/FindCapitol.wav`
+export const playCrownFinder = () => playDialog(CROWN_FINDER)
+
+const ARCHERY_SHOOTED = [
+    `${process.env.PUBLIC_URL}/dialogs/ArchShooted1.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/ArchShooted2.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/ArchShooted3.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/ArchShooted4.wav`,
+]
+export const playArcheryShooted = () => playDialog(sample(ARCHERY_SHOOTED))
+
 var audio
 var dialogsAudio
-var volume = 0.0
+var dialogsAudio2
+var volume = 0.2
 
 const playMusic = (audioPath) => {
     if(audio) audio.pause()
@@ -81,20 +108,31 @@ const playMusic = (audioPath) => {
 }
 
 const playDialog = (audioPath) => {
+    console.log('Playing: ', audioPath)
     if(dialogsAudio) dialogsAudio.pause()
     dialogsAudio = new Audio(audioPath)
     dialogsAudio.volume = volume
     dialogsAudio.play()
 }
 
+const playDialog2 = (audioPath) => {
+    console.log('Playing: ', audioPath)
+    if(dialogsAudio2) dialogsAudio2.pause()
+    dialogsAudio2 = new Audio(audioPath)
+    dialogsAudio2.volume = volume
+    dialogsAudio2.play()
+}
+
 export const stopSounds = () => {
     if(audio) audio.pause()
     if(dialogsAudio) dialogsAudio.pause()
+    if(dialogsAudio2) dialogsAudio2.pause()
 }
 
 export const setVolume = (level) => {
     volume = level
 
-    if(audio) audio.volume = (volume - 0.1)
+    if(audio) audio.volume = volume
     if(dialogsAudio) dialogsAudio.volume = volume
+    if(dialogsAudio2) dialogsAudio2.volume = volume
 }

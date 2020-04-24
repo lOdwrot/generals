@@ -62,3 +62,15 @@ export const COOLDOWN_TIC = 'game.cooldownTic'
 export const cooldownTic = () => ({
     type: COOLDOWN_TIC,
 })
+
+export const ADD_AILITY_VISIBLE_FIELDS = 'game.addAbilityVisibleFields'
+export const addAbilityVisibleFields = (fieldsList) => ({
+    type: ADD_AILITY_VISIBLE_FIELDS,
+    payload: fieldsList
+})
+
+export const ADD_PASSIVE_ABILITY = 'game.addPassiveAbility'
+export const addPassiveAbility = (ability) => ({
+    type: ADD_PASSIVE_ABILITY,
+    payload: ability
+})

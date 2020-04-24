@@ -131,8 +131,14 @@ io.on('connection', (socket) => {
             (commandType === 'moveCapitol' && game.moveCapitol(socket.id, details)) ||
             (commandType === 'plowingField' && game.plowField(socket.id, details)) ||
             (commandType === 'unite' && game.unite(socket.id)) ||
-            (commandType === 'defender' && game.defender(socket.id))
+            (commandType === 'defender' && game.defender(socket.id)) ||
+            (commandType === 'archeryFire' && game.archeryFire(socket.id, details)) ||
+            (commandType === 'scan' && game.scanArea(socket.id, details)) ||
+            (commandType === 'autumn' && game.autumn(socket.id, details)) ||
+            (commandType === 'revealCapitols' && game.revealCapitols(socket.id, details))
         ) {
+            if (commandType === 'scan') io.to(socket.id).emit('confirmScan', details)
+            
             game.refreshStats()
             io.to(socket.id).emit('setCooldown', commandType, abilities[commandType].cooldown)
         }

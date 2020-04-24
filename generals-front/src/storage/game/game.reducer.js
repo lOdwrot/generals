@@ -23,8 +23,9 @@ const INITIAL_STATE = {
     playerRole: 'lobby',
     moveType: 'all',
     abilitySelection: null,
-    activeDefenders: [],
-    cooldowns: INIT_COOLDOWNS
+    cooldowns: INIT_COOLDOWNS,
+    abilityVisibleFields: {},
+    passiveAbilities: [],
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -45,7 +46,7 @@ export default (state = INITIAL_STATE, action) => {
         case actions.REMOVE_COMMANDS:
             return {...state, commands: state.commands.filter(v => !action.payload.includes(v.id))}
         case actions.SET_PLAYER_ROLE:
-            return {...state, playerRole: action.payload, cooldowns: INIT_COOLDOWNS}
+            return {...state, playerRole: action.payload, cooldowns: INIT_COOLDOWNS, abilityVisibleFields: {}, passiveAbilities: []}
         case actions.UPDATE_STATS:
             return {...state, ...action.payload}
         case actions.SET_MOVE_TYPE:
@@ -58,6 +59,17 @@ export default (state = INITIAL_STATE, action) => {
             const nextCooldowns = {...state.cooldowns}
             Object.keys(nextCooldowns).forEach(key => nextCooldowns[key] && nextCooldowns[key]--)
             return {...state, cooldowns: nextCooldowns}
+        }
+        case actions.ADD_AILITY_VISIBLE_FIELDS:{
+            const nextFields = {...state.abilityVisibleFields}
+            action.payload.forEach(({x, y}) => {
+                if(!nextFields[x]) nextFields[x] = {}
+                nextFields[x][y] = true
+            })
+            return {...state, abilityVisibleFields: nextFields}
+        }
+        case actions.ADD_PASSIVE_ABILITY:{
+            return {...state, passiveAbilities: [...state.passiveAbilities, action.payload]}
         }
         default:
             return state

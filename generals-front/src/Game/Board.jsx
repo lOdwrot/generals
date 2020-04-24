@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector } from '../storage/game/game.selector'
+import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector, abilityVisibleFieldsSelector, passiveAbilitiesSelector } from '../storage/game/game.selector'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
@@ -13,9 +13,12 @@ export default ({
     const userColors = overridedUserColors || useSelector(userColorsSelector)
     const commands = useSelector(commandsSelector)
     const playerRole = useSelector(playerRoleSelector)
+    const visibleFields = useSelector(abilityVisibleFieldsSelector)
+    const passiveAbilities = useSelector(passiveAbilitiesSelector)
 
     const isAllVisible = playerRole === 'spectator' || playerRole === 'historySpectator' || window.debug === true
-    
+    const allCrownsVisible= passiveAbilities.includes('revealCapitols')
+
     const mouseMoveListener = ({movementX, movementY, buttons}) => {
         if(buttons !== 1) return
         const board = document.getElementById('board')
@@ -74,7 +77,7 @@ export default ({
                                     <Field
                                         key={index}
                                         userColors={userColors}
-                                        seeAll={isAllVisible}
+                                        visibleFromAbility={isAllVisible || visibleFields[v.x]?.[v.y] || (allCrownsVisible && (v.type === 'capitol' || v.type === 'defendedCapitol'))}
                                         commands={commandsForFields[`${v.x}-${v.y}`] || []}
                                         field={v}
                                     />

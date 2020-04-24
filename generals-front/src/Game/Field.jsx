@@ -11,7 +11,7 @@ import { setAbilitySelection } from '../storage/game/game.action'
 export default React.memo(({
     field,
     commands,
-    seeAll,
+    visibleFromAbility,
     userColors
 }) => {
     const user = useSelector(userSelector)
@@ -26,33 +26,40 @@ export default React.memo(({
     const isActiveField = activeField.x === x && activeField.y === y
 
     const handleClickField = () => {
-        if(isClickableByAbility()) executeInstantCommand(abilitySelection, {x, y}) 
-        if (abilitySelection) dispatch(setAbilitySelection(null))
-        if (!isOwner || seeAll) return
+        if (!isOwner || visibleFromAbility) return
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)
     }
 
+    const handleRightClickField = (event) => {
+        event.preventDefault()
+        if  (isClickableByAbility()) executeInstantCommand(abilitySelection, {x, y}) 
+        if (abilitySelection) dispatch(setAbilitySelection(null))
+    }
+
     const getBackgroundColor = () => {
-        if (!seeAll && !isVisible === true) return '#202020'
+        if (!visibleFromAbility && !isVisible === true) return '#202020'
         if(owner === 'n') return 'grey'
         return userColors[owner] || 'grey'
     }
 
-    const getFieldUnits = () => (seeAll || !!isVisible) && (units != null) && units
+    const getFieldUnits = () => (visibleFromAbility || !!isVisible) && (units != null) && units
     const isClickableByAbility = () => {
         if(!abilitySelection) return false
         if(abilitySelection === 'reborn' && type === 'castle' && playerIdToTeamId[owner] === playerIdToTeamId[user.socketId]) return true
         if(abilitySelection === 'moveCapitol' && type === 'castle' && owner === user.socketId) return true
         if(abilitySelection === 'plowingField' && type === 'plain' && owner === user.socketId) return true
+        if(abilitySelection === 'archeryFire' && (visibleFromAbility || isVisible)) return true
+        if(abilitySelection === 'scan') return true
     }
     // not-visible
     return (
         <div 
             onClick={handleClickField}
+            onContextMenu={handleRightClickField}
             style={{
                 backgroundColor: getBackgroundColor(),
-                backgroundImage: getImageLink(type, isVisible || seeAll)
+                backgroundImage: getImageLink(type, isVisible || visibleFromAbility)
             }}
             className={classnames('board-tile', {
                 'clickable': isOwner || isClickableByAbility(),
@@ -77,7 +84,7 @@ export default React.memo(({
     if(
         isEqual(prevProps.commands, nextProps.commands) &&
         isEqual(prevProps.field, nextProps.field) &&
-        isEqual(prevProps.seeAll, nextProps.seeAll)
+        isEqual(prevProps.visibleFromAbility, nextProps.visibleFromAbility)
     ) return true
     return false
 })

@@ -10,3 +10,5 @@ export const moveTypeSelector = state => state.game.moveType
 export const abilitySelectionSelector = state => state.game.abilitySelection
 export const playerIdToTeamIdSelector = state => state.game.playerIdToTeamId
 export const cooldownsSelector = state => state.game.cooldowns
+export const abilityVisibleFieldsSelector = state => state.game.abilityVisibleFields
+export const passiveAbilitiesSelector = state => state.game.passiveAbilities
