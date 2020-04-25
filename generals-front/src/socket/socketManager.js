@@ -5,7 +5,7 @@ import { setUser } from '../storage/user/user.action'
 import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands, setAbilitySelection, setCooldown, cooldownTic, addAbilityVisibleFields, addPassiveAbility } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
-import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol, playArcheryShooted, playAutumn, playAutumnEffect } from '../audioPlayer/audioPlayer'
+import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol, playArcheryShooted, playAutumn, playAutumnEffect, playAttackWarning, playLostCastle } from '../audioPlayer/audioPlayer'
 import { eraseHistory, setUserColorsInHistory } from '../storage/history/history.action'
 import { playersSelector, passiveAbilitiesSelector } from '../storage/game/game.selector'
 
@@ -88,6 +88,8 @@ io.on('sound_ConquerCapitol', playConquerCapitol)
 io.on('sound_LostCapitol', playLostCapitol)
 io.on('sound_archeryShooted', playArcheryShooted)
 io.on('sound_autumn', playAutumnEffect)
+io.on('sound_capitolAttack', playAttackWarning)
+io.on('sound_lostCastle', playLostCastle)
 
 // CHAT
 export const sendMessage = (message) => io.emit('sendMessage', message)

@@ -1,7 +1,7 @@
 import { generateMap } from "./mapUtils"
 import { MOVE_TO_RESP_RATIO } from "../config"
 import {flatten, uniq} from 'lodash'
-import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle, notifySound_archeryShooted, notifySound_autumn, notifySound_conquerCapitol, notifySound_lostCapitol } from "./InstantActions"
+import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle, notifySound_archeryShooted, notifySound_autumn, notifySound_conquerCapitol, notifySound_lostCapitol, notifySound_capitolAttacked, notifySound_lostCastle } from "./InstantActions"
 import { abilities } from './Abilities'
 
 const isCapitol = (type) => type === 'capitol' || type === 'defendedCapitol'
@@ -207,8 +207,11 @@ export class Game {
             }
             else if (toField.type === 'castle') {
                 notifySound_conquerCastle(fromField.owner)
+                notifySound_lostCastle(toField.owner)
             }
             toField.owner = socketId
+        } else if(isCapitol(toField.type)) {
+            notifySound_capitolAttacked(toField.owner)
         }
         
         toField.units = Math.abs(toField.units - movedUnits)

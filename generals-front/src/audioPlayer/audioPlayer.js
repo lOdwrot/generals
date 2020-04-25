@@ -44,6 +44,21 @@ const PLOWING_FIELD1 = `${process.env.PUBLIC_URL}/dialogs/PlowingField1.wav`
 const PLOWING_FIELD2 = `${process.env.PUBLIC_URL}/dialogs/PlowingField2.wav`
 export const playPlowingFieldConfirmation = () => playDialog(sample([PLOWING_FIELD1]))
 
+const ATTACK_WARNINGS = [
+    `${process.env.PUBLIC_URL}/dialogs/WarningAttack.wav`,
+]
+export const playAttackWarning = () => playDialog(sample(ATTACK_WARNINGS))
+
+const LOST_CASTLE = `${process.env.PUBLIC_URL}/dialogs/WarningAttack2.wav`
+export const playLostCastle = () => playDialog(LOST_CASTLE)
+
+const RANDOM_CAPITOL = [
+    `${process.env.PUBLIC_URL}/dialogs/RandomCapitol.wav`,
+    `${process.env.PUBLIC_URL}/dialogs/RandomCapitol2.wav`,
+]
+export const playRandomCapitol = () => playDialog(sample(RANDOM_CAPITOL))
+
+
 const MOVE_CAPITOL = `${process.env.PUBLIC_URL}/dialogs/MoveCapitol.wav`
 export const playMoveCapitolConfirmation = () => playDialog(MOVE_CAPITOL)
 
@@ -87,7 +102,7 @@ const AUTUMN_SELECT = [
 ]
 export const playAutumnSelect = () => playDialog2(sample(AUTUMN_SELECT))
 
-const AUTUMN_EFFECT = `${process.env.PUBLIC_URL}/dialogs/5gEffect.wav`
+const AUTUMN_EFFECT = `${process.env.PUBLIC_URL}/dialogs/5gEffect.mp3`
 export const playAutumnEffect = () => playDialog(AUTUMN_EFFECT)
 
 const CROWN_FINDER = `${process.env.PUBLIC_URL}/dialogs/FindCapitol.wav`
@@ -105,7 +120,7 @@ var audio
 var dialogsAudio
 var dialogsAudio2
 var volume = 0.5
-var volume2 = 0.5
+var volume2 = 1
 
 const playMusic = (audioPath) => {
     if(!audio) {

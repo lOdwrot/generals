@@ -7,6 +7,7 @@ import { clickOnActiveField, setHalfUnitsMove } from './Reactions'
 import {executeInstantCommand} from '../socket/socketManager'
 import {isEqual} from 'lodash'
 import { setAbilitySelection } from '../storage/game/game.action'
+import { playRandomCapitol } from '../audioPlayer/audioPlayer'
 
 export default React.memo(({
     field,
@@ -27,6 +28,7 @@ export default React.memo(({
 
     const handleClickField = () => {
         if (!isOwner || visibleFromAbility) return
+        if (type === 'capitol' && Math.random() < 0.08) playRandomCapitol()
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)
     }
