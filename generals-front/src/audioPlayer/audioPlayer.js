@@ -87,7 +87,7 @@ const AUTUMN_SELECT = [
 ]
 export const playAutumnSelect = () => playDialog2(sample(AUTUMN_SELECT))
 
-const AUTUMN_EFFECT = `${process.env.PUBLIC_URL}/dialogs/5gEffect.mp3`
+const AUTUMN_EFFECT = `${process.env.PUBLIC_URL}/dialogs/5gEffect.wav`
 export const playAutumnEffect = () => playDialog(AUTUMN_EFFECT)
 
 const CROWN_FINDER = `${process.env.PUBLIC_URL}/dialogs/FindCapitol.wav`
@@ -105,6 +105,7 @@ var audio
 var dialogsAudio
 var dialogsAudio2
 var volume = 0.5
+var volume2 = 0.5
 
 const playMusic = (audioPath) => {
     if(!audio) {
@@ -124,7 +125,7 @@ const playDialog = (audioPath) => {
     dialogsAudio.pause()
     dialogsAudio.src = audioPath
     dialogsAudio.load()
-    dialogsAudio.volume = volume
+    dialogsAudio.volume = volume2
     dialogsAudio.play()
 }
 
@@ -134,7 +135,7 @@ const playDialog2 = (audioPath) => {
     dialogsAudio2.pause()
     dialogsAudio2.src = audioPath
     dialogsAudio2.load()
-    dialogsAudio2.volume = volume
+    dialogsAudio2.volume = volume2
     dialogsAudio2.play()
 }
 
@@ -146,8 +147,11 @@ export const stopSounds = () => {
 
 export const setVolume = (level) => {
     volume = level
-
     if(audio) audio.volume = volume
-    if(dialogsAudio) dialogsAudio.volume = volume
-    if(dialogsAudio2) dialogsAudio2.volume = volume
+}
+
+export const setVolume2 = (level) => {
+    volume2 = level
+    if(dialogsAudio) dialogsAudio.volume = volume2
+    if(dialogsAudio2) dialogsAudio2.volume = volume2
 }
