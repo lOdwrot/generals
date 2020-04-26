@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector, abilityVisibleFieldsSelector, passiveAbilitiesSelector } from '../storage/game/game.selector'
+import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector, abilityVisibleFieldsSelector, passiveAbilitiesSelector, usersStatsSelector, playersSelector, abilitySelectionSelector } from '../storage/game/game.selector'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
+import store from '../storage/store'
 
 export default ({
     overridedBoard,
@@ -15,6 +16,8 @@ export default ({
     const playerRole = useSelector(playerRoleSelector)
     const visibleFields = useSelector(abilityVisibleFieldsSelector)
     const passiveAbilities = useSelector(passiveAbilitiesSelector)
+    const abilitySelection = useSelector(abilitySelectionSelector)
+    const [abilityHoveredFields, setAbilityHoveredFields] = useState({})
 
     const isAllVisible = playerRole === 'spectator' || playerRole === 'historySpectator' || window.debug === true
     const allCrownsVisible= passiveAbilities.includes('revealCapitols')
@@ -40,7 +43,37 @@ export default ({
         board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
     }
 
+    const handleHoverField = (x, y) => {
+        if (!abilitySelection) return
+        const fields = {}
+        for (let iX = x - 1; iX <= x + 1; iX++) {
+            for (let iY = y - 1; iY <= y + 1; iY++) {
+                if(!fields[iX]) fields[iX] = {}
+                fields[iX][iY] = true
+            }
+        }
+        setAbilityHoveredFields(fields)
+    }
+
+    const clearAbilityHover = () => setAbilityHoveredFields({})
+
+    // TO DO: rewrite to reactive way
+    const centerOnCapitol = () => {
+        setTimeout(() => {
+            const gState = store.getState()
+            const userStats = gState.game.usersStats
+            const socketId = gState.user.socketId
+            const capitol = userStats[socketId].ownedSpecialFields[0]
+            if(!capitol) console.error('# no capitol for player found')
+            const {x, y} = capitol
+            const board = document.getElementById('board')
+            board.style.top = `${(window.innerHeight / 2) - 45 * y}px`
+            board.style.left = `${(window.innerWidth / 2) - 45 * x}px`
+        }, 1000)
+    }
+
     useEffect(() => {
+        centerOnCapitol()
         if(playerRole !== 'historySpectator') {
             window.addEventListener('keypress', keyboardListener)
         }
@@ -76,10 +109,14 @@ export default ({
                                 row.map((v, index) => (
                                     <Field
                                         key={index}
+                                        abilitySelection={abilitySelection}
                                         userColors={userColors}
                                         visibleFromAbility={isAllVisible || visibleFields[v.x]?.[v.y] || (allCrownsVisible && (v.type === 'capitol' || v.type === 'defendedCapitol'))}
                                         commands={commandsForFields[`${v.x}-${v.y}`] || []}
                                         field={v}
+                                        notifyMouseOver={handleHoverField}
+                                        clearAbilityHover={clearAbilityHover}
+                                        isHoveredByAbility={abilitySelection && abilityHoveredFields[v.x]?.[v.y]}
                                     />
                                 ))
                             }

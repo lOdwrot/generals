@@ -140,8 +140,8 @@ io.on('connection', (socket) => {
         ) {
             if (commandType === 'scan') io.to(socket.id).emit('confirmScan', details)
             
-            game.refreshStats()
             io.to(socket.id).emit('setCooldown', commandType, abilities[commandType].cooldown)
+            game.refreshStats()
         }
         console.log('Processed Event')
     })

@@ -13,12 +13,15 @@ export default React.memo(({
     field,
     commands,
     visibleFromAbility,
-    userColors
+    userColors,
+    abilitySelection,
+    notifyMouseOver,
+    clearAbilityHover,
+    isHoveredByAbility,
 }) => {
     const user = useSelector(userSelector)
     const activeField = useSelector(activeFieldSelector)
     const moveType = useSelector(moveTypeSelector)
-    const abilitySelection = useSelector(abilitySelectionSelector)
     const playerIdToTeamId = useSelector(playerIdToTeamIdSelector)
     const dispatch = useDispatch()
 
@@ -59,6 +62,7 @@ export default React.memo(({
         <div 
             onClick={handleClickField}
             onContextMenu={handleRightClickField}
+            onMouseEnter={() => isClickableByAbility() ? notifyMouseOver(x, y) : clearAbilityHover()}
             style={{
                 backgroundColor: getBackgroundColor(),
                 backgroundImage: getImageLink(type, isVisible || visibleFromAbility)
@@ -66,6 +70,7 @@ export default React.memo(({
             className={classnames('board-tile', {
                 'clickable': isOwner || isClickableByAbility(),
                 'selected-field': isActiveField,
+                'hovered-by-ability' : isHoveredByAbility
             })}
         >
             {
@@ -86,7 +91,8 @@ export default React.memo(({
     if(
         isEqual(prevProps.commands, nextProps.commands) &&
         isEqual(prevProps.field, nextProps.field) &&
-        isEqual(prevProps.visibleFromAbility, nextProps.visibleFromAbility)
+        isEqual(prevProps.visibleFromAbility, nextProps.visibleFromAbility) &&
+        isEqual(prevProps.isHoveredByAbility, nextProps.isHoveredByAbility)
     ) return true
     return false
 })

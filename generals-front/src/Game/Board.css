@@ -32,6 +32,10 @@ body {
     position: relative;
 }
 
+.hovered-by-ability {
+    opacity: 0.5 !important;
+}
+
 .clickable {
     cursor: pointer;
 }
