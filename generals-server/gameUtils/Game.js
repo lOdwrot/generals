@@ -369,7 +369,7 @@ export class Game {
         if(!this.getSpecialField(playerId, 'archeryTower', cost)) return
 
         const {x, y} = coordinates
-        const affectedFields = []
+        let affectedFields = []
         for (let iX = (x - 1); iX <= (x + 1);  iX++) {
             for (let iY = (y - 1); iY <= (y + 1);  iY++) {
                 affectedFields.push(this.getBoardField({x: iX, y: iY}))

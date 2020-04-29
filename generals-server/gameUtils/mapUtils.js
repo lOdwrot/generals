@@ -88,7 +88,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'archeryTower',
-            units: random(0,25) + 80
+            units: random(0,25) + 40
         })
     }
 
@@ -97,7 +97,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'observerTower',
-            units: random(0,25) + 80
+            units: random(0,25) + 40
         })
     }
 
@@ -106,7 +106,7 @@ export const generateMap = ({
         result[x][y] = ({
             ...result[x][y],
             type: 'abandonedFortress',
-            units: 250
+            units: 150
         })
     }
 
