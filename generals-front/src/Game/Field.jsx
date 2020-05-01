@@ -62,7 +62,7 @@ export default React.memo(({
         <div 
             onClick={handleClickField}
             onContextMenu={handleRightClickField}
-            onMouseEnter={() => isClickableByAbility() ? notifyMouseOver(x, y) : clearAbilityHover()}
+            onMouseEnter={() => abilitySelection && (isClickableByAbility() ? notifyMouseOver(x, y) : clearAbilityHover())}
             style={{
                 backgroundColor: getBackgroundColor(),
                 backgroundImage: getImageLink(type, isVisible || visibleFromAbility)
