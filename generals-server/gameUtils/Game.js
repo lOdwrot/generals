@@ -58,7 +58,7 @@ export class Game {
             castles: (mapWidth + mapHeight) * 0.75 * castlesDensity,
             archeryTowers: (mapWidth + mapHeight) * 0.2 * archeryTowersDensity,
             observerTowers: (mapWidth + mapHeight) * 0.2 * observerTowersDensity,
-            abondedFotresses: (mapWidth + mapHeight) * 0.05 * abandonedFortressesDensity,
+            abondedFotresses: (mapWidth + mapHeight) * 0.1 * abandonedFortressesDensity,
             mountains: (mapWidth * mapHeight) * 0.22 * mountainDensity,
             players: players.map(v => v.socketId)
         }),
