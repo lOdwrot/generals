@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { userSelector } from '../storage/user/user.selector'
-import { activeFieldSelector, userColorsSelector, moveTypeSelector, abilitySelectionSelector, playerIdToTeamIdSelector } from '../storage/game/game.selector'
+import { activeFieldSelector, moveTypeSelector, playerIdToTeamIdSelector } from '../storage/game/game.selector'
 import classnames from 'classnames'
 import { clickOnActiveField, setHalfUnitsMove } from './Reactions'
 import {executeInstantCommand} from '../socket/socketManager'
@@ -18,16 +18,14 @@ export default React.memo(({
     notifyMouseOver,
     clearAbilityHover,
     isHoveredByAbility,
+    isActiveField,
+    moveType
 }) => {
     const user = useSelector(userSelector)
-    const activeField = useSelector(activeFieldSelector)
-    const moveType = useSelector(moveTypeSelector)
     const playerIdToTeamId = useSelector(playerIdToTeamIdSelector)
     const dispatch = useDispatch()
-
     const { type, owner, units, x, y, isVisible } = field
     const isOwner = user.socketId === owner
-    const isActiveField = activeField.x === x && activeField.y === y
 
     const handleClickField = () => {
         if (!isOwner || visibleFromAbility) return
@@ -79,8 +77,8 @@ export default React.memo(({
                     :  getFieldUnits()
             }
             {
-                commands.map(v => (
-                    <div className={getClassForArrow(v)}>
+                commands.map((v, index) => (
+                    <div key={index} className={getClassForArrow(v)}>
                         {getSignForArrow(v)}
                     </div>
                 ))
@@ -89,7 +87,9 @@ export default React.memo(({
     )
 }, (prevProps, nextProps) => {
     if(
-        isEqual(prevProps.commands, nextProps.commands) &&
+        prevProps.commands.length === nextProps.commands.length &&
+        prevProps.isActiveField === nextProps.isActiveField &&
+        prevProps.moveType === nextProps.moveType &&
         isEqual(prevProps.field, nextProps.field) &&
         isEqual(prevProps.visibleFromAbility, nextProps.visibleFromAbility) &&
         isEqual(prevProps.isHoveredByAbility, nextProps.isHoveredByAbility)

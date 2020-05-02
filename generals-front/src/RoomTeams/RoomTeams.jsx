@@ -4,7 +4,7 @@ import { playersSelector } from '../storage/game/game.selector'
 import styles from './RoomTeams.module.scss'
 import { Button } from 'antd'
 import { userSelector } from '../storage/user/user.selector'
-import { changeTeam } from '../socket/socketManager'
+import { changeTeam, joinAsSpectactor } from '../socket/socketManager'
 
 const TEAM_NAMES = [
     'Kings',
@@ -36,6 +36,7 @@ export default () => {
     return (
         <>  
             <div className={styles['room-header']}>Room: {user.roomId}</div>
+            <Button onClick={joinAsSpectactor}>Watch Current Game</Button>
             <div className={styles['rooms-wrapper']}>
                 {
                     players.map((v, index) => (

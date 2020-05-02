@@ -1,6 +1,7 @@
 import {sample} from 'lodash'
 import store from '../storage/store'
-import { playerRoleSelector } from '../storage/game/game.selector'
+import { playerRoleSelector, tourCounterSelector } from '../storage/game/game.selector'
+import { gameSettingsSelector } from '../storage/settings/settings.selector'
 
 const BATTLE_START_MUSIC =  `${process.env.PUBLIC_URL}/battleStart1.mp3`
 const OPENING_MUSIC =  `${process.env.PUBLIC_URL}/open.mp3`
@@ -41,8 +42,7 @@ const REBORN_DIALOG = `${process.env.PUBLIC_URL}/dialogs/RiseFromAshes.wav`
 export const playRebornDialog = () => playDialog(REBORN_DIALOG)
 
 const PLOWING_FIELD1 = `${process.env.PUBLIC_URL}/dialogs/PlowingField1.wav`
-const PLOWING_FIELD2 = `${process.env.PUBLIC_URL}/dialogs/PlowingField2.wav`
-export const playPlowingFieldConfirmation = () => playDialog(sample([PLOWING_FIELD1]))
+export const playPlowingFieldConfirmation = () => playDialog(PLOWING_FIELD1)
 
 const ATTACK_WARNINGS = [
     `${process.env.PUBLIC_URL}/dialogs/WarningAttack.wav`,
@@ -125,7 +125,15 @@ var volume2 = 1
 const playMusic = (audioPath) => {
     if(!audio) {
         audio = new Audio()
-        audio.onended = () => playerRoleSelector(store.getState()) === 'fighter' && playBattleMusic2()
+        audio.onended = () => {
+            const gState = store.getState()
+            const playerRole = playerRoleSelector(gState)
+            if (playerRole !== 'fighter' && playerRole !== 'spectator') return 
+            const {nonAggression} = gameSettingsSelector(gState)
+            const tour = tourCounterSelector(gState)
+            if (tour < nonAggression) playPeacfullBackgoundMusic()
+            else playBattleMusic2()
+        }
     }
     audio.pause()
     audio.src = audioPath

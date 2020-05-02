@@ -9,7 +9,7 @@ export const abilities =  {
     },
     moveCapitol: {
         cost: 100,
-        cooldown: 350,
+        cooldown: 500,
     },
     defender: {
         cost: 50,
@@ -17,16 +17,16 @@ export const abilities =  {
         duaration: 50
     },
     plowingField: {
-        cost: 50,
-        cooldown: 150,
-    },
-    scan: {
-        cost: 50,
+        cost: 25,
         cooldown: 100,
     },
+    scan: {
+        cost: 25,
+        cooldown: 50,
+    },
     archeryFire: {
-        cost: 350,
-        cooldown: 500,
+        cost: 300,
+        cooldown: 400,
     },
     autumn: {
         cost: 1000,

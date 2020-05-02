@@ -5,12 +5,11 @@ import { setUser } from '../storage/user/user.action'
 import { setPlayers, setBoard, removeCommands, updateStats, setPlayerRole, setActiveField, setCommands, setAbilitySelection, setCooldown, cooldownTic, addAbilityVisibleFields, addPassiveAbility } from '../storage/game/game.action'
 import { addMessage } from '../storage/messages/message.action'
 import { replaceGameSetting } from '../storage/settings/settings.action'
-import { playBattleStartMusic, playPeacfullBackgoundMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol, playArcheryShooted, playAutumn, playAutumnEffect, playAttackWarning, playLostCastle } from '../audioPlayer/audioPlayer'
+import { playBattleStartMusic, playLostMusic, playWinMusic, playBattleMusic, playRebornDialog, playPlowingFieldConfirmation, playMoveCapitolConfirmation, playUniteArmyConfirmation, playDefenderConfirmation, playConquerCastle, playConquerCapitol, playLostCapitol, playArcheryShooted, playAutumn, playAutumnEffect, playAttackWarning, playLostCastle } from '../audioPlayer/audioPlayer'
 import { eraseHistory, setUserColorsInHistory } from '../storage/history/history.action'
-import { playersSelector, passiveAbilitiesSelector } from '../storage/game/game.selector'
+import { playersSelector } from '../storage/game/game.selector'
 
 const io = socketIO(config.address)
-
 
 // MAIN ACTIONS
 export const startGame = (gameParams) => io.emit('start', gameParams)
@@ -22,10 +21,7 @@ io.on('startBattle', () => {
     store.dispatch(setCommands([]))
     store.dispatch(setPlayerRole('fighter'))
     store.dispatch(setAbilitySelection(null))
-    
-
     playBattleStartMusic()
-    setTimeout(() => playPeacfullBackgoundMusic(), 6000)
     
     // HISTORY
     const userColors = playersSelector(store.getState())
@@ -103,10 +99,19 @@ export const joinToRoom = (roomId) => io.emit('join', {
 })
 export const setRoomSettings = (settings) => io.emit('setRoomSettings', settings)
 export const changeTeam = (nextTeamId) => io.emit('changeTeam', nextTeamId)
+export const joinAsSpectactor = () => io.emit('joinAsSpectactor')
+
 io.on('setRoomSettings', settings => store.dispatch(replaceGameSetting(settings)))
 io.on('joined', user => store.dispatch(setUser(user)))
 io.on('refreshPlayersInRoom', players => store.dispatch(setPlayers(players)))
 io.on('noRoom', () => window.alert('No room with given id'))
+io.on('spectactorResponse', (approved) => {
+    if(approved) {
+        store.dispatch(setPlayerRole('spectator'))
+        store.dispatch(setUserColorsInHistory(store.getState().game.userColors))
+        playBattleStartMusic()
+    } else window.alert('Game not started yet')
+})
 
 
 export default io

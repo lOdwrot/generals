@@ -124,6 +124,8 @@ io.on('connection', (socket) => {
         getUserGame(socket.id).eraseCommands(socket.id, commandIds)
     })
 
+    socket.on('joinAsSpectactor', () => io.to(socket.id).emit('spectactorResponse', checkIsGameForUser(socket.id)))
+
     socket.on('executeInstantCommand', (commandType, details) => {
         if(!checkIsGameForUser(socket.id)) return
         const game = getUserGame(socket.id)

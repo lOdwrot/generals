@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector, abilityVisibleFieldsSelector, passiveAbilitiesSelector, usersStatsSelector, playersSelector, abilitySelectionSelector } from '../storage/game/game.selector'
+import { boardSelector, commandsSelector, playerRoleSelector, userColorsSelector, abilityVisibleFieldsSelector, passiveAbilitiesSelector, usersStatsSelector, playersSelector, abilitySelectionSelector, activeFieldSelector, moveTypeSelector } from '../storage/game/game.selector'
 import './Board.css'
 import Field from './Field'
 import { keyboardListener } from './Reactions'
@@ -17,31 +17,12 @@ export default ({
     const visibleFields = useSelector(abilityVisibleFieldsSelector)
     const passiveAbilities = useSelector(passiveAbilitiesSelector)
     const abilitySelection = useSelector(abilitySelectionSelector)
+    const activeField = useSelector(activeFieldSelector)
+    const moveType = useSelector(moveTypeSelector)
     const [abilityHoveredFields, setAbilityHoveredFields] = useState({})
 
     const isAllVisible = playerRole === 'spectator' || playerRole === 'historySpectator' || window.debug === true
     const allCrownsVisible= passiveAbilities.includes('revealCapitols')
-
-    const mouseMoveListener = ({movementX, movementY, buttons}) => {
-        if(buttons !== 1) return
-        const board = document.getElementById('board')
-        const {left, top} = board.style
-        board.style.left = (Number(left.slice(0, -2)) + movementX) + 'px'
-        board.style.top = (Number(top.slice(0, -2)) + movementY) + 'px'
-
-    }
-
-    const mouseWheelListener = ({deltaY}) => {
-        const board = document.getElementById('board')
-        const currnetScale = Number(board.style.transform.slice(6, -1))
-        const nextScale = currnetScale + (deltaY > 0
-                ? -0.1
-                : 0.1
-            )
-        if (nextScale > 2 || nextScale < 0.3) return
-
-        board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
-    }
 
     const handleHoverField = (x, y) => {
         if (!abilitySelection) return
@@ -56,21 +37,6 @@ export default ({
     }
 
     const clearAbilityHover = () => setAbilityHoveredFields({})
-
-    // TO DO: rewrite to reactive way
-    const centerOnCapitol = () => {
-        setTimeout(() => {
-            const gState = store.getState()
-            const userStats = gState.game.usersStats
-            const socketId = gState.user.socketId
-            const capitol = userStats[socketId].ownedSpecialFields[0]
-            if(!capitol) console.error('# no capitol for player found')
-            const {x, y} = capitol
-            const board = document.getElementById('board')
-            board.style.top = `${(window.innerHeight / 2) - 45 * y}px`
-            board.style.left = `${(window.innerWidth / 2) - 45 * x}px`
-        }, 1000)
-    }
 
     useEffect(() => {
         centerOnCapitol()
@@ -117,6 +83,8 @@ export default ({
                                         notifyMouseOver={handleHoverField}
                                         clearAbilityHover={clearAbilityHover}
                                         isHoveredByAbility={abilitySelection && abilityHoveredFields[v.x]?.[v.y]}
+                                        isActiveField={v.x === activeField.x && v.y === activeField.y}
+                                        moveType={moveType}
                                     />
                                 ))
                             }
@@ -126,4 +94,44 @@ export default ({
             </div>
         </div>
     )
+}
+
+function mouseMoveListener({movementX, movementY, buttons}) {
+    if(buttons !== 1) return
+    const board = document.getElementById('board')
+    const {left, top} = board.style
+    board.style.left = (Number(left.slice(0, -2)) + movementX) + 'px'
+    board.style.top = (Number(top.slice(0, -2)) + movementY) + 'px'
+}
+
+function mouseWheelListener({deltaY}) {
+    const board = document.getElementById('board')
+    const currnetScale = Number(board.style.transform.slice(6, -1))
+    const nextScale = currnetScale + (deltaY > 0
+            ? -0.1
+            : 0.1
+        )
+    if (nextScale > 2 || nextScale < 0.3) return
+
+    board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
+}
+
+// TO DO: rewrite to reactive way
+function centerOnCapitol() {
+    setTimeout(() => {
+        try {
+            const gState = store.getState()
+            const userStats = gState.game.usersStats
+            const socketId = gState.user.socketId
+            const capitol = userStats[socketId].ownedSpecialFields[0]
+            if(!capitol) console.error('# no capitol for player found')
+            const {x, y} = capitol
+            const board = document.getElementById('board')
+            board.style.top = `${(window.innerHeight / 2) - 45 * y}px`
+            board.style.left = `${(window.innerWidth / 2) - 45 * x}px`
+        } catch(e) {
+            console.error('Data to center map not available yet')
+            console.error(e)
+        }
+    }, 1750)
 }

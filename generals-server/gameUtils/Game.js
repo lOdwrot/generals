@@ -379,8 +379,8 @@ export class Game {
         affectedFields = affectedFields.filter(v => v && v.units)
         affectedFields.forEach(v => {
                 v.units = Math.ceil(v.type === 'plain'
-                    ? 0.4 * v.units
-                    : 0.8 * v.units 
+                    ? 0.25 * v.units
+                    : 0.75 * v.units 
                 )
             })
 
@@ -418,7 +418,7 @@ export class Game {
                 if(field.owner === 'n') return
                 if (type != 'plain' && type != 'capitol' && type != 'defendedCapitol') {
                     field.owner = 'n'
-                    field.units = 10
+                    field.units = 40
                 } else {
                     field.units = 1
                 }
