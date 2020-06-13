@@ -3,6 +3,7 @@ import { MOVE_TO_RESP_RATIO } from "../config"
 import {flatten, uniq} from 'lodash'
 import { notifyRemovedCommands, notifyPeaceEnd, notifyLost, notifyNextBoard, notifyNextStats, notifyGameEnd, notifyCooldownTic, notifySound_conquerCastle, notifySound_archeryShooted, notifySound_autumn, notifySound_conquerCapitol, notifySound_lostCapitol, notifySound_capitolAttacked, notifySound_lostCastle } from "./InstantActions"
 import { abilities } from './Abilities'
+import {refreshPlayersInRoom} from '../index'
 
 const isCapitol = (type) => type === 'capitol' || type === 'defendedCapitol'
 
@@ -113,8 +114,14 @@ export class Game {
 
         if (remainingTeamIds.length === 1) {
             console.log('Game Over!')
+            this.players.forEach(v => {
+                if(remainingTeamIds[0] === v.teamId) v.wins++
+                else v.failures++
+            })
+
             this.isGameOver = true
             notifyGameEnd(this.roomId)
+            refreshPlayersInRoom(this.roomId)
         }
     }
 

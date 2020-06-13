@@ -36,6 +36,8 @@ io.on('connection', (socket) => {
             teamId: 0,
             userName,
             roomId,
+            wins: 0,
+            failures: 0
         }
 
         rooms[roomId] = {
@@ -62,7 +64,9 @@ io.on('connection', (socket) => {
             color,
             userName,
             roomId,
-            teamId: roomUsers.length
+            teamId: roomUsers.length,
+            wins: 0,
+            failures: 0
         }
 
         rooms[roomId].users = [...roomUsers, user]
@@ -177,7 +181,7 @@ const handleDisconnect = (socketId) => {
     delete rooms[user.roomId]
 }
 
-const refreshPlayersInRoom = (roomId) => io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
+export const refreshPlayersInRoom = (roomId) => io.to(roomId).emit('refreshPlayersInRoom', rooms[roomId].users)
 const getUserGame = (socketId) => rooms[users[socketId].roomId].game
 const checkIsGameForUser = (socketId) => {
     const user = users[socketId]

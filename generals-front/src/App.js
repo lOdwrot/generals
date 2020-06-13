@@ -12,6 +12,7 @@ import AudioControl from './AudioControl/AudioControl';
 import './App.css'
 import BattleHistory from './BattleHistory/BattleHistory';
 import Abilities from './Abilities/Abilities';
+import UserStats from './UserStats/UserStats.jsx';
 
 function App() {
   const playerRole = useSelector(playerRoleSelector)
@@ -43,6 +44,7 @@ function App() {
         playerRole === 'historySpectator' &&
         <BattleHistory/>
       }
+      <UserStats/>
     </div>
   );
 }
