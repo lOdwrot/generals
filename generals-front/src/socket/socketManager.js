@@ -92,19 +92,26 @@ export const sendMessage = (message) => io.emit('sendMessage', message)
 io.on('chat', message => store.dispatch(addMessage(message)))
 
 // ROOM
-export const createRoom = () => io.emit('createRoom', store.getState().user.userName)
-export const joinToRoom = (roomId) => io.emit('join', {
+export const createRoom = (userName) => io.emit('createRoom', userName)
+export const joinToRoom = (roomId, userName) => io.emit('join', {
     roomId,
-    userName: store.getState().user.userName
+    userName
 })
 export const setRoomSettings = (settings) => io.emit('setRoomSettings', settings)
 export const changeTeam = (nextTeamId) => io.emit('changeTeam', nextTeamId)
 export const joinAsSpectactor = () => io.emit('joinAsSpectactor')
 
 io.on('setRoomSettings', settings => store.dispatch(replaceGameSetting(settings)))
-io.on('joined', user => store.dispatch(setUser(user)))
+io.on('joined', user => {
+    window.history.replaceState({}, null, user.roomId)
+    store.dispatch(setUser(user))
+})
 io.on('refreshPlayersInRoom', players => store.dispatch(setPlayers(players)))
-io.on('noRoom', () => window.alert('No room with given id'))
+
+io.on('noRoom', () => {
+    window.alert(`No room with given id: ${window.location.pathname.slice(1)}`)
+    window.history.replaceState({}, null, './')
+})
 io.on('spectactorResponse', (approved) => {
     if(approved) {
         store.dispatch(setPlayerRole('spectator'))

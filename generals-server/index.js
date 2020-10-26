@@ -29,7 +29,7 @@ const colors = ['red', 'cornflowerblue', 'green', 'orange', 'purple', 'brown', '
 
 io.on('connection', (socket) => {
     socket.on('createRoom', (userName) => {
-        const roomId = uniqid()
+        const roomId = Math.random().toString(36).substring(2, 8)
         const user = {
             socketId: socket.id,
             color: colors[0],

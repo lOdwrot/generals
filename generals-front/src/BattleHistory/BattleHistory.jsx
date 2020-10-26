@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { historySelector, historyUserColorsSelector } from '../storage/history/history.selector'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './BattleHistory.module.scss'
 import Board from '../Game/Board'
 import { Slider, Button } from 'antd'
 import { DoubleLeftOutlined, BackwardOutlined, CaretLeftOutlined, CaretRightOutlined, FastForwardOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import useRefState from '../hooks/useRefState'
+import { updateStats } from '../storage/game/game.action'
+import { flatten } from 'lodash'
 
 
 export default () => {
@@ -15,10 +17,15 @@ export default () => {
     const [board, setBoard] = useState(history[0])
     const [speed, speedRef, setSpeed] = useRefState(25)
     const [isAutoPlay, isAutoPlayRef, setIsAutoPlay] = useRefState(false)
+    const dispatch = useDispatch()
 
-    const updateBoard = (tourIndex) => {
-        setTourIndex(tourIndex)
-        setBoard(history[tourIndex])
+    const updateBoard = (tourCounter) => {
+        setTourIndex(tourCounter)
+        setBoard(history[tourCounter])
+        const usersStats = calculateUserStatsLocal(history[tourCounter], Object.keys(historyUserColors))
+        dispatch(updateStats({
+            usersStats, tourCounter
+        }))
     }
 
     const incrementBoard = () => {
@@ -122,4 +129,36 @@ export default () => {
             }
         </>
     )
+}
+
+function calculateUserStatsLocal(board, userIds) {
+    debugger
+    const userStats = userIds.reduce((acc, v) => ({
+        ...acc, 
+        [v]: {
+            units: 0,
+            lands: 0,
+            castle: 0,
+            archeryTower: 0,
+            observerTower: 0,
+            abandonedFortress: 0,
+            ownedSpecialFields: []
+        }
+    }), {})
+
+    flatten(board)
+        .forEach((field) => {
+            const {owner, units, type} = field
+            if (owner == 'n' || !userStats[owner]) return
+            const stats = userStats[owner]
+            stats.units += units
+            stats.lands++
+            if (type === 'plain') return
+            if (type === 'castle') stats.castle++ 
+            if(type === 'archeryTower') stats.archeryTower++
+            if(type === 'observerTower') stats.observerTower++
+            if(type === 'abandonedFortress') stats.abandonedFortress++
+            stats.ownedSpecialFields.push(field)
+        })
+    return userStats
 }

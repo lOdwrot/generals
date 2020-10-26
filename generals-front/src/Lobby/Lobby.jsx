@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Input, Form } from 'antd';
 import { createRoom, joinToRoom } from '../socket/socketManager';
-import { useDispatch, useSelector } from 'react-redux'
-import { setUserName } from '../storage/user/user.action';
+import { useSelector } from 'react-redux'
 import styles from './Lobby.module.scss'
 import { userSelector } from '../storage/user/user.selector';
 import RoomTeams from '../RoomTeams/RoomTeams';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const FormItem = Form.Item
 
 export default () => {
-    const dispatch = useDispatch()
     const [roomId, setRoomId] = useState('')
+    const [userName, setUserName] = useLocalStorage('userName', 'King')
     const [isNameConfirmed, setIsNameConfirmed] = useState(false)
     const user = useSelector(userSelector)
     const isAllDisabled = !!user.roomId
+    console.log('UserName ', userName)
+    useEffect(() => {
+        !user.roomId &&
+        window.location.pathname.length > 1 && 
+        joinToRoom(window.location.pathname.slice(1), userName)
+    }, [])
     
     return (
         <div className={styles['lobby-wrapper']}>
@@ -28,8 +34,8 @@ export default () => {
                 <FormItem help='User Name'>
                     <div style={{display: 'flex'}}>
                         <Input
-                            onChange={e => dispatch(setUserName(e.target.value))}
-                            value={user.userName}
+                            onChange={e => setUserName(e.target.value)}
+                            value={userName}
                             placeholder='User Name'
                             disabled={isNameConfirmed || isAllDisabled}
                         />
@@ -51,7 +57,7 @@ export default () => {
                     <div>
                         <Button
                             disabled={user.roomId}
-                            onClick={createRoom}
+                            onClick={() => createRoom(userName)}
                             style={{width: '255px'}}
                         >
                             Create Room
@@ -67,7 +73,7 @@ export default () => {
                                     placeholder='Room ID' 
                                     onChange={(e) => setRoomId(e.target.value)}
                                 />
-                                <Button onClick={() => joinToRoom(roomId)}>
+                                <Button onClick={() => joinToRoom(roomId, userName)}>
                                     Join
                                 </Button>
                             </div>

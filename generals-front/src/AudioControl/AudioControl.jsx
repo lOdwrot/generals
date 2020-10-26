@@ -1,59 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import styles from './AudioControl.module.scss'
 import { Button, Slider } from 'antd'
 import { SoundOutlined, CommentOutlined } from '@ant-design/icons'
-import { setVolume } from '../audioPlayer/audioPlayer'
 import * as ap from '../audioPlayer/audioPlayer'
+import useLocalStorage from './../hooks/useLocalStorage';
 
 export default () => {
-    const [vloumeLevel, setVloumeLevel] = useState(50)
-    const [vloumeLevel2, setVloumeLevel2] = useState(100)
-
-    const handleSetVolumeLevel = (level) => {
-        setVloumeLevel(level)
-        setVolume(level / 100)
-    } 
-
-    const handleSetVolumeLevel2 = (level) => {
-        setVloumeLevel2(level)
-        ap.setVolume2(level / 100)
-    } 
+    const [volumeLevel, setVolumeLevel] = useLocalStorage('volume1', 50)
+    const [volumeLevel2, setVolumeLevel2] = useLocalStorage('volume2', 100)
+    useEffect(
+        () => {
+            ap.setVolume(volumeLevel / 100)
+            ap.setVolume2(volumeLevel2 / 100)
+        }, [volumeLevel, volumeLevel2]
+    )
 
     return (
         <div className={styles['audio-panel']}>
             <div className={styles['controller']}>
                 <Button
-                    onClick={() => handleSetVolumeLevel2(vloumeLevel2 ? 0 : 100)}
+                    onClick={() => setVolumeLevel2(volumeLevel2 ? 0 : 100)}
                     icon={<CommentOutlined />}
                 />
                 <div className={styles['slider-wrapper']}>
                     <Slider
                         min={0}
                         max={100}
-                        onChange={handleSetVolumeLevel2}
-                        value={vloumeLevel2}
+                        onChange={setVolumeLevel2}
+                        value={volumeLevel2}
                     />
                 </div>
             </div>
             <div className={styles['controller']}>
                 <Button
-                    onClick={() => handleSetVolumeLevel(vloumeLevel ? 0 : 100)}
+                    onClick={() => setVolumeLevel(volumeLevel ? 0 : 100)}
                     icon={<SoundOutlined />}
                 />
                 <div className={styles['slider-wrapper']}>
                     <Slider
                         min={0}
                         max={100}
-                        onChange={handleSetVolumeLevel}
-                        value={vloumeLevel}
+                        onChange={setVolumeLevel}
+                        value={volumeLevel}
                     />
                 </div>
             </div>
-            {/* <div>
-                <Button onClick={() => ap.playAttackWarning()}>playAttackWarning</Button>
-                <Button onClick={() => ap.playLostCastle()}>playLostCastle</Button>
-                <Button onClick={() => ap.playCrownFinder()}>playCrownFinder</Button>
-            </div> */}
         </div>
     )
 }
