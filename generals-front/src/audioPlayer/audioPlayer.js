@@ -31,9 +31,6 @@ export const playCaptureCapitolSound = () => playDialog(CAPTURE_CAPITOL_SOUND)
 export const playPeacfullBackgoundMusic = () => playMusic(sample(PEACFULL_BACKGROUNDS))
 export const playBattleMusic = () => playMusic(BATTLE_MUSIC)
 
-const BATTLE_MUSIC2 = `${process.env.PUBLIC_URL}/battleMusic2.mp3`
-export const playBattleMusic2 = () => playMusic(BATTLE_MUSIC2)
-
 export const playLostMusic = () => playMusic(LOST_MUSIC)
 export const playWinMusic = () => playMusic(WON_MUSIC)
 
@@ -131,8 +128,8 @@ const playMusic = (audioPath) => {
             if (playerRole !== 'fighter' && playerRole !== 'spectator') return 
             const {nonAggression} = gameSettingsSelector(gState)
             const tour = tourCounterSelector(gState)
-            if (tour < nonAggression) playPeacfullBackgoundMusic()
-            else playBattleMusic2()
+            if (tour < nonAggression && tour > 50) playPeacfullBackgoundMusic()
+            else playBattleMusic()
         }
     }
     audio.pause()
