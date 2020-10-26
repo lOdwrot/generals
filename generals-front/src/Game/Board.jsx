@@ -105,16 +105,25 @@ function mouseMoveListener({movementX, movementY, buttons}) {
 }
 
 function mouseWheelListener({deltaY}) {
+    modifieZoom(deltaY)
+}
+
+export function modifieZoom(scrollValue, forceValue) {
     const board = document.getElementById('board')
     const currnetScale = Number(board.style.transform.slice(6, -1))
-    const nextScale = currnetScale + (deltaY > 0
+    const scaleModifier = forceValue 
+        ? scrollValue
+        : (scrollValue > 0
             ? -0.1
             : 0.1
         )
+    const nextScale = currnetScale + scaleModifier
     if (nextScale > 2 || nextScale < 0.3) return
 
     board.style.transform = `scale(${String(nextScale).padEnd(3, '.0')})`
-}
+} 
+
+
 
 // TO DO: rewrite to reactive way
 function centerOnCapitol() {
