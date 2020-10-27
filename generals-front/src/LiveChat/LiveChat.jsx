@@ -20,11 +20,6 @@ export default () => {
         }
     }, [messages])
 
-    useEffect(() => {
-        window.addEventListener('keypress', ({key}) => key === 'Enter' && handleSendMessage())
-        return window.removeEventListener('keypress', handleSendMessage)
-    }, [])
-
     const handleSendMessage = () => {
         sendMessage(newMessage)
         setNewMessage('')
@@ -55,6 +50,9 @@ export default () => {
                     </div>
                     <div className={styles['new-message']}>
                         <Input 
+                            onKeyDown={(e) => {
+                                e.key === 'Enter' && handleSendMessage()
+                            }}
                             placeholder='Message....'
                             value={newMessage}
                             onChange={e => setNewMessage(e.target.value)}
