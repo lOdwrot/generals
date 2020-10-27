@@ -8,7 +8,7 @@ import { modifieZoom } from './Board'
 export const clickOnActiveField = (x, y) => store.dispatch(setActiveField({x, y}))
 export const setHalfUnitsMove = () => store.dispatch(setMoveType('half'))
 
-const MOVE_KEYS = ['w', 's', 'a', 'd']
+const MOVE_KEYS = ['w', 's', 'a', 'd', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
 export const keyboardListener
  = ({key}) => {
     if(MOVE_KEYS.includes(key)) return move(key)

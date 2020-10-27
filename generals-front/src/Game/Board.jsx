@@ -41,13 +41,13 @@ export default ({
     useEffect(() => {
         centerOnCapitol()
         if(playerRole !== 'historySpectator') {
-            window.addEventListener('keypress', keyboardListener)
+            window.addEventListener('keydown', keyboardListener)
         }
         window.addEventListener('mousemove', mouseMoveListener)
         window.addEventListener('mousewheel', mouseWheelListener)
         return () => {
             if(playerRole !== 'historySpectator') {
-                window.removeEventListener('keypress', keyboardListener)
+                window.removeEventListener('keydown', keyboardListener)
             }
             window.removeEventListener('mousemove', mouseMoveListener)
             window.removeEventListener('mousewheel', mouseWheelListener)

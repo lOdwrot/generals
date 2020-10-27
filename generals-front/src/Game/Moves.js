@@ -49,19 +49,19 @@ const isPositionValid = (x, y, board) => {
 
 const translateDirectionKeyToMove = (x, y, key) => {
     let direction
-    if(key === 'w') {
+    if(key === 'w' || key === 'ArrowUp') {
         direction = 'u'
         y--
     }
-    if(key === 's') {
+    if(key === 's' || key === 'ArrowDown') {
         y++
         direction = 'd'
     }
-    if(key === 'a') {
+    if(key === 'a' || key === 'ArrowLeft') {
         x--
         direction = 'l'
     }
-    if(key === 'd') {
+    if(key === 'd' || key === 'ArrowRight') {
         x++
         direction = 'r'
     }
