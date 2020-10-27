@@ -28,7 +28,7 @@ export default React.memo(({
     const isOwner = user.socketId === owner
 
     const handleClickField = () => {
-        if (!isOwner || visibleFromAbility) return
+        if (!isOwner) return
         if (type === 'capitol' && Math.random() < 0.08) playRandomCapitol()
         if (isActiveField && moveType === 'all') return setHalfUnitsMove()
         clickOnActiveField(x, y)

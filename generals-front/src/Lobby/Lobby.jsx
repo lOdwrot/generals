@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Form } from 'antd';
-import { createRoom, joinToRoom } from '../socket/socketManager';
+import { joinToRoom } from '../socket/socketManager';
 import { useSelector } from 'react-redux'
 import styles from './Lobby.module.scss'
 import { userSelector } from '../storage/user/user.selector';
 import RoomTeams from '../RoomTeams/RoomTeams';
 import useLocalStorage from '../hooks/useLocalStorage';
+import CreateRoomModal from './CreateRoomModal/CreateRoomModal';
+import ButtonGroup from 'antd/lib/button/button-group';
+import JoinRoomModal from './JoinRoomModal/JoinRoomModal';
 
 const FormItem = Form.Item
 
 export default () => {
-    const [roomId, setRoomId] = useState('')
     const [userName, setUserName] = useLocalStorage('userName', 'King')
     const [isNameConfirmed, setIsNameConfirmed] = useState(false)
     const user = useSelector(userSelector)
     const isAllDisabled = !!user.roomId
-    console.log('UserName ', userName)
+
     useEffect(() => {
         !user.roomId &&
         window.location.pathname.length > 1 && 
@@ -54,33 +56,17 @@ export default () => {
                 </FormItem>
                 {
                     !user.roomId &&
-                    <div>
-                        <Button
-                            disabled={user.roomId}
-                            onClick={() => createRoom(userName)}
-                            style={{width: '255px'}}
-                        >
-                            Create Room
-                        </Button>
+                    <div style={{marginBottom: '25px'}}>
+                        <ButtonGroup>
+                            <CreateRoomModal
+                                userName={userName}
+                            />
+                            <JoinRoomModal
+                                userName={userName}
+                            />
+                        </ButtonGroup>
                     </div>
                 }
-                {
-                    !user.roomId &&
-                    <div>
-                        <FormItem help={'Room ID to join'}>
-                            <div style={{display: 'flex'}}>
-                                <Input 
-                                    placeholder='Room ID' 
-                                    onChange={(e) => setRoomId(e.target.value)}
-                                />
-                                <Button onClick={() => joinToRoom(roomId, userName)}>
-                                    Join
-                                </Button>
-                            </div>
-                        </FormItem>
-                    </div>
-                }
-
                 {
                     user.roomId && <RoomTeams/>
                 }

@@ -11,7 +11,6 @@ import store from '../storage/store'
 import { playersSelector } from '../storage/game/game.selector'
 
 const FormItem = Form.Item
-const Option = Select.Option
 
 const AVAILABLE_GAME_MODES = [
     {name: 'Conquest', description: 'Capture all opponent capitols'}
@@ -125,7 +124,7 @@ export default () => {
                                 onChange={(v) => handleChangeSetting('mountainDensity', v)}
                             />
                         </FormItem>
-                        <FormItem help={`Abandoned Fortesses Density: ${abandonedFortressesDensity}`}>
+                        <FormItem help={`5G Towers Density: ${abandonedFortressesDensity}`}>
                             <Slider
                                 disabled={!isHost}
                                 min={0}

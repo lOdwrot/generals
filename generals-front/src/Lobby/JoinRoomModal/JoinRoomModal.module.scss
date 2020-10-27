@@ -1,0 +1,18 @@
+.info-row {
+    display: flex;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.info-row > div {
+    text-align: center;
+    width: 30%;
+}
+
+.available-rooms-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
