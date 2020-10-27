@@ -1,14 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { messagesSelector } from '../storage/messages/messages.selector'
 import { sendMessage } from '../socket/socketManager'
 import styles from './LiveChat.module.scss'
 import { Input, Button } from 'antd'
+import { userSelector } from '../storage/user/user.selector'
+import classnames from 'classnames'
 
 export default () => {
     const [newMessage, setNewMessage] = useState('')
     const [isVisible, setIsVisible] = useState(false)
+    const [isHighlighted, setIsHighlighted] = useState(true)
+    const user = useSelector(userSelector)
     const messages = useSelector(messagesSelector)
+
+    useEffect(() => {
+        if(!isVisible && !isHighlighted && messages.length){
+            setIsHighlighted(true)
+        }
+    }, [messages])
+
+    useEffect(() => {
+        window.addEventListener('keypress', ({key}) => key === 'Enter' && handleSendMessage())
+        return window.removeEventListener('keypress', handleSendMessage)
+    }, [])
 
     const handleSendMessage = () => {
         sendMessage(newMessage)
@@ -18,8 +33,13 @@ export default () => {
     return (
         <div className={styles['chat-wrapper']}>
             <div 
-                onClick={() => setIsVisible(!isVisible)}
-                className={styles['chat-header']}>
+                onClick={() => {
+                    setIsVisible(!isVisible)
+                    setIsHighlighted(false)
+                }}
+                className={classnames(styles['chat-header'], {
+                    [styles['chat-header-attention']]: isHighlighted
+                })}>
                 Room Chat
             </div>
             {
@@ -29,6 +49,9 @@ export default () => {
                         {
                             messages.map((v, index) => <div key={index}>{v}</div>)
                         }
+                        {
+                            !user.roomId && <div style={{color: 'red'}}>Join to room to use Room Chat</div>
+                        }
                     </div>
                     <div className={styles['new-message']}>
                         <Input 
@@ -37,7 +60,7 @@ export default () => {
                             onChange={e => setNewMessage(e.target.value)}
                         />
                         <Button onClick={handleSendMessage}>
-                            Send Message
+                            Send
                         </Button>
                     </div>
                 </div>
