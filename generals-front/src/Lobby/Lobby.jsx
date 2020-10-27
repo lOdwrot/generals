@@ -30,7 +30,7 @@ export default () => {
                 <img alt='logo' src='/logo.png' className={`${styles['logo']}  ${styles['logo-left']}`}/>
                 <img alt='logo' src='/logo.png' className={`${styles['logo']}  ${styles['logo-right']}`}/>
                 <h3 className={styles['header']}>
-                    Overlight Generals <br/>
+                    Generals <br/>
                     <span className={styles['subtytle']}>Kings Alliance</span>
                 </h3>
                 <FormItem help='User Name'>

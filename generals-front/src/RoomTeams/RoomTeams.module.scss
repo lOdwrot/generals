@@ -1,7 +1,7 @@
 .rooms-wrapper {
     display: flex;
     width: 100%;
-    justify-content: center;
+    overflow-x: auto;
     text-align: center;
     color: white;
     padding-bottom: 5px;

@@ -205,7 +205,9 @@ const handleDisconnect = (socketId) => {
 }
 
 const handleRefreshGameSearch = () => {
-    const publicRooms = Object.values(rooms).filter(v => v.isPublic)
+    const publicRooms = Object.values(rooms)
+                        .filter(v => v.isPublic)
+                        .map(({users, roomId, isPublic, maxPlayers}) => ({users, roomId, isPublic, maxPlayers}))
     io.to(IN_GAME_SEARCH_ID).emit('searchRoomUpdate', publicRooms)
 }
 
